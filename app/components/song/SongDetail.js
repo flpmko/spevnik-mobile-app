@@ -1,7 +1,7 @@
 import { StyleSheet, Text, SafeAreaView, ScrollView, View } from "react-native";
 import React from "react";
-import { ThemeContext } from "../util/ThemeManager";
-import colors from "../config/colors";
+import { ThemeContext } from "../../util/ThemeManager";
+import colors from "../../config/colors";
 
 const SongDetail = ({ route }) => {
   const { theme } = React.useContext(ThemeContext);
@@ -63,6 +63,7 @@ const styles = StyleSheet.create({
   textContainer: {
     display: "flex",
     paddingTop: 30,
+    paddingBottom: 100,
   },
   textText: {
     fontSize: 20,

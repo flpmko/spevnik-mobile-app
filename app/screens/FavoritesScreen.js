@@ -1,36 +1,11 @@
-import { StyleSheet, Text, SafeAreaView } from "react-native";
 import React from "react";
-
-import { ThemeContext } from "../util/ThemeManager";
-import colors from "../config/colors";
+import SongsPage from "../components/song/SongsPage";
+import favorites_data from "../data/favorites_data";
 
 const FavoritesScreen = () => {
-  const { theme } = React.useContext(ThemeContext);
   return (
-    <SafeAreaView style={[styles.container, styles[`container${theme}`]]}>
-      <Text style={[styles[`text${theme}`]]}>FavoritesScreen</Text>
-    </SafeAreaView>
+    <SongsPage screenTitle={"Obľúbené"} data={favorites_data} filters={false} />
   );
 };
 
 export default FavoritesScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  containerlight: {
-    backgroundColor: colors.light,
-  },
-  containerdark: {
-    backgroundColor: colors.dark,
-  },
-  textdark: {
-    color: colors.light,
-  },
-  textlight: {
-    color: colors.black,
-  },
-});

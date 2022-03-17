@@ -2,8 +2,8 @@ import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 
-import { ThemeContext } from "../util/ThemeManager";
-import colors from "../config/colors";
+import { ThemeContext } from "../../util/ThemeManager";
+import colors from "../../config/colors";
 
 const PlaylistItem = ({ item, onPress }) => {
   const { theme } = React.useContext(ThemeContext);

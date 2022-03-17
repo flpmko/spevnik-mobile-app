@@ -2,14 +2,21 @@ import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 
-import { ThemeContext } from "../util/ThemeManager";
-import colors from "../config/colors";
+import { ThemeContext } from "../../util/ThemeManager";
+import colors from "../../config/colors";
 
-const ListItem = ({ item, onPress }) => {
+const PlaylistListItem = ({ onPress, item }) => {
   const { theme } = React.useContext(ThemeContext);
+
   return (
     <TouchableOpacity onPress={onPress}>
       <View style={styles.listItem}>
+        <View style={styles.containerLeftIcon}>
+          <Ionicons
+            name={"menu"}
+            color={theme === "light" ? "black" : "white"}
+          />
+        </View>
         <View style={styles.containerNumber}>
           <Text style={[styles.listItemNumber, styles[`text${theme}`]]}>
             {item.number}
@@ -34,25 +41,31 @@ const ListItem = ({ item, onPress }) => {
   );
 };
 
-export default ListItem;
+export default PlaylistListItem;
 
 const styles = StyleSheet.create({
+  containerLeftIcon: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   containerIcon: {
     flex: 1,
     alignItems: "flex-end",
     justifyContent: "center",
   },
   containerName: {
-    flex: 7,
+    flex: 6,
     justifyContent: "center",
   },
   containerNumber: {
     flex: 1,
-    paddingLeft: 10,
+    paddingHorizontal: 3,
   },
   listItem: {
     flex: 1,
-    padding: 10,
+    paddingVertical: 10,
+    paddingRight: 10,
     flexDirection: "row",
   },
   listItemNumber: {
@@ -61,7 +74,6 @@ const styles = StyleSheet.create({
   },
   listItemName: {
     fontSize: 18,
-    paddingLeft: 10,
   },
   textdark: {
     color: colors.light,

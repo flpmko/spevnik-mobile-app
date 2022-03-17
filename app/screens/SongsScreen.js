@@ -1,31 +1,9 @@
 import React from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-
-import SongDetail from "./SongDetail";
-import SongsList from "./SongsList";
-import { Button } from "react-native-web";
+import SongsPage from "../components/song/SongsPage";
+import songs_data from "../data/songs_data";
 
 function SongsScreen(props) {
-  const Stack = createNativeStackNavigator();
-
-  return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="SongsList"
-        component={SongsList}
-        options={{ headerTitle: "Piesne" }}
-      />
-      <Stack.Screen
-        name="SongDetail"
-        component={SongDetail}
-        options={({ route }) => {
-          return {
-            headerTitle: "Pieseň č. " + route.params.song.number,
-          };
-        }}
-      />
-    </Stack.Navigator>
-  );
+  return <SongsPage data={songs_data} screenTitle={"Piesne"} filters={true} />;
 }
 
 export default SongsScreen;

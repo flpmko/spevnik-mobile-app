@@ -2,23 +2,23 @@ import React from "react";
 import { StyleSheet, FlatList, SafeAreaView } from "react-native";
 import { StatusBar } from "expo-status-bar";
 
-import { ThemeContext } from "../util/ThemeManager";
-import ListItem from "../components/ListItem";
-import Separator from "../components/Separator";
-import colors from "../config/colors";
-import songs_data from "../data/songs_data";
+import { ThemeContext } from "../../util/ThemeManager";
+import Separator from "../list/Separator";
+import colors from "../../config/colors";
+import PlaylistListItem from "./PlaylistListItem";
 
-const SongsList = ({ navigation }) => {
+const PlaylistDetail = ({ navigation, route }) => {
   const { theme } = React.useContext(ThemeContext);
-  const Songs = songs_data;
+  const songs = route.params.playlist.songs;
   return (
     <SafeAreaView style={[styles.container, styles[`container${theme}`]]}>
       <FlatList
-        data={Songs}
+        style={styles.containerList}
+        data={songs}
         keyExtractor={(item) => item.number}
         renderItem={({ item }) => {
           return (
-            <ListItem
+            <PlaylistListItem
               item={item}
               onPress={() => navigation.push("SongDetail", { song: item })}
             />
@@ -37,6 +37,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  containerList: {
+    height: "100%",
+  },
   containerlight: {
     backgroundColor: colors.light,
   },
@@ -45,4 +48,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SongsList;
+export default PlaylistDetail;

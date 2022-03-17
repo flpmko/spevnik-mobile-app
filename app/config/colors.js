@@ -6,5 +6,9 @@ export default {
   red: "tomato",
 
   dark: "#212121",
+  dark_placeholder: "#717171",
+
   light: "whitesmoke",
+  light_placeholder: "#919191",
+  lightgray: "#E8E8E8",
 };
