@@ -1,10 +1,18 @@
-import { StyleSheet, Text, SafeAreaView, ScrollView, View } from "react-native";
 import React from "react";
+import { StyleSheet, Text, SafeAreaView, ScrollView, View } from "react-native";
+
 import { ThemeContext } from "../../util/ThemeManager";
 import colors from "../../config/colors";
 
 const SongDetail = ({ route }) => {
-  const { theme } = React.useContext(ThemeContext);
+  const { theme, fontSize } = React.useContext(ThemeContext);
+
+  const textStyles = StyleSheet.create({
+    textText: {
+      fontSize: fontSize,
+    },
+  });
+
   return (
     <SafeAreaView>
       <ScrollView style={[styles.container, styles[`container${theme}`]]}>
@@ -13,11 +21,15 @@ const SongDetail = ({ route }) => {
         </View>
         <View style={styles.categoryContainer}>
           <Text style={[styles.categoryText, styles[`text${theme}`]]}>
-            {route.params.song.category}
+            {route.params.song.category},
+          </Text>
+          <Text style={[styles.categoryText, styles[`text${theme}`]]}>
+            {" "}
+            {route.params.song.season}
           </Text>
         </View>
         <View style={styles.textContainer}>
-          <Text style={[styles.textText, styles[`text${theme}`]]}>
+          <Text style={[textStyles.textText, styles[`text${theme}`]]}>
             {route.params.song.text}
           </Text>
         </View>
@@ -56,6 +68,7 @@ const styles = StyleSheet.create({
   },
   categoryContainer: {
     display: "flex",
+    flexDirection: "row",
   },
   categoryText: {
     fontStyle: "italic",
@@ -64,8 +77,5 @@ const styles = StyleSheet.create({
     display: "flex",
     paddingTop: 30,
     paddingBottom: 100,
-  },
-  textText: {
-    fontSize: 20,
   },
 });

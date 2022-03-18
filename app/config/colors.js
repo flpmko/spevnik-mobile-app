@@ -6,7 +6,8 @@ export default {
   red: "tomato",
 
   dark: "#212121",
-  dark_placeholder: "#717171",
+  dark_placeholder: "#A9A9A9",
+  darkgray: "#696969",
 
   light: "whitesmoke",
   light_placeholder: "#919191",

@@ -3,14 +3,26 @@ import { StyleSheet, Text, View } from "react-native";
 import SearchBar from "./SearchBar";
 import FilterBar from "./filter/FilterBar";
 
-const SearchFilterBar = ({ filters, handleSearch, query }) => {
+const SearchFilterBar = ({
+  filters,
+  handleSearch,
+  query,
+  seasonQuery,
+  setSeasonQuery,
+}) => {
   return (
     <View>
       <View>
         <SearchBar handleSearch={handleSearch} query={query} />
       </View>
       <View style={styles.containerFilter}>
-        <FilterBar data={filters} />
+        <FilterBar
+          handleSearch={handleSearch}
+          query={query}
+          seasonQuery={seasonQuery}
+          setSeasonQuery={setSeasonQuery}
+          data={filters}
+        />
       </View>
     </View>
   );

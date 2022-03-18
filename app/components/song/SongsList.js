@@ -11,14 +11,24 @@ import SearchFilterBar from "../SearchFilterBar";
 import colors from "../../config/colors";
 
 const SongsList = (props) => {
-  const filters = ["Vianoce", "Veľká noc", "Pôst", "Slávnostné"];
+  const filters = [
+    "Advent",
+    "Vianoce",
+    "Veľká noc",
+    "Pôst",
+    "Vstúpenie",
+    "Zoslanie",
+    "Trojjediný",
+    "Cirkev",
+  ];
   const allSongs = props.route.params.data;
   const { theme } = React.useContext(ThemeContext);
   const [songs, setSongs] = useState(allSongs);
   const [query, setQuery] = useState("");
+  const [seasonQuery, setSeasonQuery] = useState("");
 
-  const contains = ({ number }, input) => {
-    if (number.toString().includes(input)) {
+  const contains = ({ number, season }, input) => {
+    if (number.toString().includes(input) || season.includes(input)) {
       return true;
     }
     return false;
@@ -30,6 +40,7 @@ const SongsList = (props) => {
     });
     setSongs(data);
     setQuery(input);
+    console.log(seasonQuery);
   };
 
   return (
@@ -54,6 +65,8 @@ const SongsList = (props) => {
               filters={filters}
               handleSearch={handleSearch}
               query={query}
+              seasonQuery={seasonQuery}
+              setSeasonQuery={setSeasonQuery}
             />
           ) : (
             <SearchBar handleSearch={handleSearch} query={query} />

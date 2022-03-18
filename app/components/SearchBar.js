@@ -39,19 +39,20 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   textInput: {
-    backgroundColor: colors.lightgray,
     padding: 10,
     height: 40,
     borderColor: colors.primary,
-    borderWidth: 1,
-    borderRadius: 15,
+    borderWidth: 0,
+    borderRadius: 20,
     width: "98%",
     fontSize: 18,
   },
   textdark: {
+    backgroundColor: colors.darkgray,
     color: colors.light,
   },
   textlight: {
+    backgroundColor: colors.lightgray,
     color: colors.black,
   },
 });

@@ -13,7 +13,6 @@ import PlaylistsScreen from "../screens/PlaylistsScreen";
 import FavoritesScreen from "../screens/FavoritesScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import colors from "../config/colors";
-import { backgroundColor } from "react-native/Libraries/Components/View/ReactNativeStyleAttributes";
 
 const Tab = createBottomTabNavigator();
 
@@ -43,14 +42,28 @@ const Navigation = () => {
           },
           tabBarActiveTintColor: "tomato",
           tabBarInactiveTintColor: "gray",
-          headerShown: false,
-          // tabBarActiveBackgroundColor: "#6692a6",
         })}
       >
-        <Tab.Screen name="Piesne" component={SongsScreen} />
-        <Tab.Screen name="Playlisty" component={PlaylistsScreen} />
-        <Tab.Screen name="Obľúbené" component={FavoritesScreen} />
-        <Tab.Screen name="Nastavenia" component={SettingsScreen} />
+        <Tab.Screen
+          name="Piesne"
+          component={SongsScreen}
+          options={{ headerShown: false }}
+        />
+        <Tab.Screen
+          name="Playlisty"
+          component={PlaylistsScreen}
+          options={{ headerShown: false }}
+        />
+        <Tab.Screen
+          name="Obľúbené"
+          component={FavoritesScreen}
+          options={{ headerShown: false }}
+        />
+        <Tab.Screen
+          name="Nastavenia"
+          component={SettingsScreen}
+          options={{ headerShown: true, headerTintColor: colors.primary }}
+        />
       </Tab.Navigator>
     </NavigationContainer>
   );

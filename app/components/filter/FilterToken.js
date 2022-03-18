@@ -4,11 +4,22 @@ import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { ThemeContext } from "../../util/ThemeManager";
 import colors from "../../config/colors";
 
-const FilterToken = ({ label }) => {
+const FilterToken = ({
+  label,
+  handleSearch,
+  query,
+  seasonQuery,
+  setSeasonQuery,
+}) => {
   const { theme } = React.useContext(ThemeContext);
   const [selected, setSelected] = useState(false);
 
   const handleTouch = () => {
+    if (!selected) {
+      setSeasonQuery(seasonQuery + label);
+    } else {
+      setSeasonQuery("");
+    }
     setSelected(!selected);
   };
 

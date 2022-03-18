@@ -53,7 +53,8 @@ const styles = StyleSheet.create({
   },
   listItem: {
     flex: 1,
-    padding: 10,
+    paddingVertical: 10,
+    paddingRight: 10,
     flexDirection: "row",
   },
   listItemNumber: {
