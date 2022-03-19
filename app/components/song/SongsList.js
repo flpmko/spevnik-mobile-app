@@ -8,6 +8,7 @@ import ListItem from "../list/ListItem";
 import Separator from "../list/Separator";
 import SearchBar from "../SearchBar";
 import SearchFilterBar from "../SearchFilterBar";
+
 import colors from "../../config/colors";
 
 const SongsList = (props) => {
@@ -28,7 +29,7 @@ const SongsList = (props) => {
   const [seasonQuery, setSeasonQuery] = useState("");
 
   const contains = ({ number, season }, input) => {
-    if (number.toString().includes(input) || season.includes(input)) {
+    if (number.toString().startsWith(input) || season.includes(input)) {
       return true;
     }
     return false;
@@ -40,7 +41,6 @@ const SongsList = (props) => {
     });
     setSongs(data);
     setQuery(input);
-    console.log(seasonQuery);
   };
 
   return (

@@ -1,10 +1,10 @@
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native-web";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { RenderItemParams, ScaleDecorator } from "react-native-draggable-flatlist";
 
-import { ThemeContext } from "../util/ThemeManager";
-import colors from "../config/colors";
+import { ThemeContext } from "../../util/ThemeManager";
+import colors from "../../config/colors";
 
 type Item = {
   number: number;
@@ -21,8 +21,8 @@ const PlaylistListItemDragable = (props, { item, drag, isActive }: RenderItemPar
     <ScaleDecorator>
       <TouchableOpacity
         onPress={props.onPress}
-        onLongPress={drag}
-        disabled={isActive}
+        onLongPress={props.item.drag}
+        disabled={props.item.isActive}
       >
         <View style={styles.listItem}>
           <View style={styles.containerLeftIcon}>
@@ -33,7 +33,7 @@ const PlaylistListItemDragable = (props, { item, drag, isActive }: RenderItemPar
           </View>
           <View style={styles.containerNumber}>
             <Text style={[styles.listItemNumber, styles[`text${theme}`]]}>
-              {props.item.number}
+              {props.item.item.number}
             </Text>
           </View>
           <View style={styles.containerName}>
@@ -41,7 +41,7 @@ const PlaylistListItemDragable = (props, { item, drag, isActive }: RenderItemPar
               style={[styles.listItemName, styles[`text${theme}`]]}
               numberOfLines={1}
             >
-              {props.item.title}
+              {props.item.item.title}
             </Text>
           </View>
           <View style={styles.containerIcon}>

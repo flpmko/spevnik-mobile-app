@@ -9,6 +9,8 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import * as Linking from "expo-linking";
+import { activateKeepAwake, deactivateKeepAwake } from "expo-keep-awake";
 
 import { ThemeContext } from "../util/ThemeManager";
 import colors from "../config/colors";
@@ -17,15 +19,43 @@ import Separator from "../components/list/Separator";
 const SettingsScreen = () => {
   const { toggleTheme, theme, fontSize, changeFontSize } =
     React.useContext(ThemeContext);
-  const [isEnabled, setIsEnabled] = useState(theme === "dark" ? true : false);
+  const [isThemeEnabled, setIsThemeEnabled] = useState(
+    theme === "dark" ? true : false
+  );
+  const [isLockEnabled, setIsLockEnabled] = useState(false);
+  const [isRotationEnabled, setIsRotationEnabled] = useState(false);
 
-  const toggleSwitch = () => {
-    setIsEnabled((previousState) => !previousState);
+  const toggleThemeSwitch = () => {
+    setIsThemeEnabled((previousIsThemeEnabled) => !previousIsThemeEnabled);
     toggleTheme();
   };
 
-  const handlePress = (param) => {
+  const toggleLockSwitch = () => {
+    setIsLockEnabled((previousIsLockEnabled) => !previousIsLockEnabled);
+  };
+
+  const toggleRotationSwitch = () => {
+    setIsRotationEnabled(
+      (previousIsRotationEnabled) => !previousIsRotationEnabled
+    );
+  };
+
+  const activateSleepLock = () => {
+    activateKeepAwake();
+    toggleLockSwitch();
+  };
+
+  const deactivateSleepLock = () => {
+    deactivateKeepAwake();
+    toggleLockSwitch();
+  };
+
+  const handleFontPress = (param) => {
     changeFontSize(param);
+  };
+
+  const handleLinkPress = (route) => {
+    Linking.openURL(route);
   };
 
   const textStyles = StyleSheet.create({
@@ -37,51 +67,157 @@ const SettingsScreen = () => {
   return (
     <SafeAreaView style={[styles.container, styles[`container${theme}`]]}>
       <ScrollView style={{ alignSelf: "stretch", paddingTop: 10 }}>
-        <View style={styles.containerbutton}>
-          <Text style={[styles.textbutton, styles[`text${theme}`]]}>
+        <View style={styles.containerLabel}>
+          <Text style={[styles.textLabel]}>Vzhľad</Text>
+        </View>
+        <View style={styles.containerSeparator}>
+          <Separator />
+        </View>
+        <View style={styles.containerItem}>
+          <Text style={[styles.textButton, styles[`text${theme}`]]}>
             Tmavý režim
           </Text>
           <Switch
             style={{ paddingLeft: 10 }}
-            trackColor={{ false: "#767577", true: "#767577" }}
-            thumbColor={isEnabled ? "#3e3e3e" : "#f4f3f4"}
-            onValueChange={toggleSwitch}
-            value={isEnabled}
+            ios_backgroundColor={colors.light_placeholder}
+            trackColor={{ false: colors.light_placeholder, true: colors.green }}
+            thumbColor={isThemeEnabled ? colors.darkergray : colors.lightergray}
+            onValueChange={toggleThemeSwitch}
+            value={isThemeEnabled}
           />
         </View>
         <View style={styles.containerSeparator}>
           <Separator />
         </View>
-        <View style={styles.containerbutton}>
-          <Text style={[styles.textbutton, styles[`text${theme}`]]}>
+        <View style={styles.containerItem}>
+          <Text style={[styles.textButton, styles[`text${theme}`]]}>
             Veľkosť textu
           </Text>
           <TouchableOpacity
             style={[styles.sizeButton, styles[`sizeButtonColor${theme}`]]}
-            onPress={() => handlePress("decrease")}
+            onPress={() => handleFontPress("decrease")}
           >
-            <Ionicons name={"ios-remove"} size={32} color={colors.primary} />
+            <Ionicons
+              name={"ios-remove"}
+              size={32}
+              color={theme === "dark" ? colors.secondary : colors.primarydark}
+            />
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.sizeButton, styles[`sizeButtonColor${theme}`]]}
-            onPress={() => handlePress("increase")}
+            onPress={() => handleFontPress("increase")}
           >
-            <Ionicons name={"ios-add"} size={32} color={colors.primary} />
+            <Ionicons
+              name={"ios-add"}
+              size={32}
+              color={theme === "dark" ? colors.secondary : colors.primarydark}
+            />
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.sizeButton, styles[`sizeButtonColor${theme}`]]}
-            onPress={() => handlePress("reset")}
+            onPress={() => handleFontPress("reset")}
           >
-            <Ionicons name={"ios-refresh"} size={32} color={colors.primary} />
+            <Ionicons
+              name={"ios-refresh"}
+              size={32}
+              color={theme === "dark" ? colors.secondary : colors.primarydark}
+            />
           </TouchableOpacity>
         </View>
-        <View style={styles.containerbutton}>
+        <View style={styles.containerItem}>
           <Text style={[textStyles.previewText, styles[`text${theme}`]]}>
             {fontSize}: Hrad prepevný je Pán Boh náš
           </Text>
         </View>
         <View style={styles.containerSeparator}>
           <Separator />
+        </View>
+        <View style={styles.containerLabel}>
+          <Text style={[styles.textLabel]}>Ovládanie</Text>
+        </View>
+        <View style={styles.containerSeparator}>
+          <Separator />
+        </View>
+        <View style={styles.containerItem}>
+          <Text style={[styles.textButton, styles[`text${theme}`]]}>
+            Uzamykanie obrazovky
+          </Text>
+          <Switch
+            style={{ paddingLeft: 10 }}
+            ios_backgroundColor={colors.light_placeholder}
+            trackColor={{ false: colors.light_placeholder, true: colors.green }}
+            thumbColor={isThemeEnabled ? colors.darkergray : colors.lightergray}
+            onValueChange={
+              isLockEnabled ? deactivateSleepLock : activateSleepLock
+            }
+            value={isLockEnabled}
+          />
+        </View>
+        <View style={styles.containerSeparator}>
+          <Separator />
+        </View>
+        <View style={styles.containerItem}>
+          <Text style={[styles.textButton, styles[`text${theme}`]]}>
+            Uzamykanie otáčania
+          </Text>
+          <Switch
+            style={{ paddingLeft: 10 }}
+            ios_backgroundColor={colors.light_placeholder}
+            trackColor={{ false: colors.light_placeholder, true: colors.green }}
+            thumbColor={isThemeEnabled ? colors.darkergray : colors.lightergray}
+            onValueChange={toggleRotationSwitch}
+            value={isRotationEnabled}
+          />
+        </View>
+        <View style={styles.containerSeparator}>
+          <Separator />
+        </View>
+        <View style={styles.containerLabel}>
+          <Text style={[styles.textLabel]}>Informácie</Text>
+        </View>
+        <View style={styles.containerSeparator}>
+          <Separator />
+        </View>
+        <View style={styles.containerItem}>
+          <Text style={[styles.textButton, styles[`text${theme}`]]}>
+            Github projekt
+          </Text>
+          <View style={styles.containerRight}>
+            <Text
+              style={[styles.textButton, styles.textLink]}
+              onPress={() =>
+                handleLinkPress("https://github.com/flpmko/spevnik-mobile-app")
+              }
+            >
+              odkaz na repozitár
+            </Text>
+            <Ionicons
+              name={"ios-logo-github"}
+              size={32}
+              color={colors.primary}
+            />
+          </View>
+        </View>
+        <View style={styles.containerSeparator}>
+          <Separator />
+        </View>
+        <View style={styles.containerItem}>
+          <Text style={[styles.textButton, styles[`text${theme}`]]}>
+            Vyžiadať pieseň
+          </Text>
+          <View style={styles.containerRight}>
+            <Text style={[styles.textButton, styles.textLink]}>
+              odkaz na formulár
+            </Text>
+          </View>
+        </View>
+        <View style={styles.containerSeparator}>
+          <Separator />
+        </View>
+        <View style={styles.containerFooter}>
+          <Text style={[styles.textLabel, styles.textFooter]}>
+            © Filip Šimko, 2022
+          </Text>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -94,19 +230,34 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "100%",
-    alignItems: "flex-start",
   },
   containerSeparator: {
     width: "100%",
-    paddingVertical: 20,
+    paddingVertical: 10,
   },
-  containerbutton: {
+  containerItem: {
     display: "flex",
     flex: 1,
     flexDirection: "row",
     width: "100%",
     alignItems: "center",
+    justifyContent: "flex-start",
     padding: 10,
+  },
+  containerLabel: {
+    alignItems: "center",
+    paddingTop: 30,
+  },
+  containerRight: {
+    marginLeft: "auto",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  containerFooter: {
+    alignItems: "center",
+    paddingTop: 50,
+    paddingBottom: 20,
   },
   containerlight: {
     backgroundColor: colors.light,
@@ -114,9 +265,18 @@ const styles = StyleSheet.create({
   containerdark: {
     backgroundColor: colors.dark,
   },
-  textbutton: {
+  textButton: {
     paddingRight: 10,
     fontSize: 18,
+  },
+  textLabel: {
+    color: colors.darkgray,
+  },
+  textFooter: {
+    fontSize: 12,
+  },
+  textLink: {
+    color: colors.primary,
   },
   sizeButton: {
     borderWidth: 0,

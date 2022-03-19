@@ -19,11 +19,7 @@ const PlaylistItem = ({ item, onPress }) => {
           </Text>
         </View>
         <View style={styles.containerIcon}>
-          <Ionicons
-            name={"chevron-forward"}
-            size={24}
-            color={theme === "light" ? "black" : "white"}
-          />
+          <Ionicons name={"chevron-forward"} size={24} color={"white"} />
         </View>
       </View>
     </TouchableOpacity>

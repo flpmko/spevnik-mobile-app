@@ -1,15 +1,15 @@
-import { StyleSheet, SafeAreaView, FlatList } from "react-native";
 import React from "react";
+import { StyleSheet, SafeAreaView, FlatList } from "react-native";
 import { StatusBar } from "expo-status-bar";
 
 import { ThemeContext } from "../../util/ThemeManager";
 import PlaylistItem from "./PlaylistItem";
 import colors from "../../config/colors";
-import playlists_data from "../../data/playlists_data";
 
-const PlaylistList = ({ navigation }) => {
+const PlaylistList = (props) => {
   const { theme } = React.useContext(ThemeContext);
-  const Playlists = playlists_data;
+  const Playlists = props.route.params.playlists;
+
   return (
     <SafeAreaView style={[styles.container, styles[`container${theme}`]]}>
       <FlatList
@@ -21,7 +21,7 @@ const PlaylistList = ({ navigation }) => {
             <PlaylistItem
               item={item}
               onPress={() =>
-                navigation.push("PlaylistDetail", { playlist: item })
+                props.navigation.push("PlaylistDetail", { playlist: item })
               }
             />
           );

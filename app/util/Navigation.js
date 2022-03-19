@@ -62,7 +62,11 @@ const Navigation = () => {
         <Tab.Screen
           name="Nastavenia"
           component={SettingsScreen}
-          options={{ headerShown: true, headerTintColor: colors.primary }}
+          options={{
+            headerShown: true,
+            headerTintColor:
+              theme === "dark" ? colors.primarydark : colors.primary,
+          }}
         />
       </Tab.Navigator>
     </NavigationContainer>
