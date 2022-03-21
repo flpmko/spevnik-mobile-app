@@ -9,10 +9,9 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { filter } from "lodash";
 import { BottomSheetModal, BottomSheetFlatList } from "@gorhom/bottom-sheet";
-import DraggableFlatList, {
-  ScaleDecorator,
-} from "react-native-draggable-flatlist";
+import DraggableFlatList from "react-native-draggable-flatlist";
 
 import { ThemeContext } from "../../util/ThemeManager";
 import Separator from "../list/Separator";
@@ -23,9 +22,26 @@ import SearchBar from "../SearchBar";
 import PlaylistListItemDragable from "./PlaylistListItemDragable";
 
 const PlaylistDetail = ({ navigation, route }) => {
+  const AllSongs = songs_data;
   const { theme } = React.useContext(ThemeContext);
   const [songs, setSongs] = useState(route.params.playlist.songs);
-  const AllSongs = songs_data;
+  const [filteredSongs, setFilteredSongs] = useState(AllSongs);
+  const [query, setQuery] = useState("");
+
+  const contains = ({ number }, input) => {
+    if (number.toString().startsWith(input)) {
+      return true;
+    }
+    return false;
+  };
+
+  const handleSearch = (input) => {
+    const data = filter(AllSongs, (song) => {
+      return contains(song, input);
+    });
+    setFilteredSongs(data);
+    setQuery(input);
+  };
   const bottomSheetModalRef = route.params.bottomSheetRef;
 
   // variables
@@ -47,26 +63,6 @@ const PlaylistDetail = ({ navigation, route }) => {
     []
   );
 
-  const renderListItem = ({ item, drag, isActive }) => {
-    return (
-      <ScaleDecorator>
-        <TouchableOpacity
-          onLongPress={drag}
-          disabled={isActive}
-          style={[
-            styles.rowItem,
-            { backgroundColor: isActive ? "red" : item.backgroundColor },
-          ]}
-        >
-          <PlaylistListItem
-            item={item}
-            onPress={() => navigation.push("SongDetail", { song: item })}
-          />
-        </TouchableOpacity>
-      </ScaleDecorator>
-    );
-  };
-
   return (
     <SafeAreaView style={[styles.container, styles[`container${theme}`]]}>
       <View>
@@ -77,11 +73,13 @@ const PlaylistDetail = ({ navigation, route }) => {
           onChange={handleSheetChanges}
         >
           <BottomSheetFlatList
-            data={AllSongs}
+            data={filteredSongs}
             keyExtractor={(song) => song.number}
             renderItem={renderItem}
             contentContainerStyle={styles.contentContainer}
-            ListHeaderComponent={SearchBar}
+            ListHeaderComponent={
+              <SearchBar handleSearch={handleSearch} query={query} />
+            }
           />
         </BottomSheetModal>
       </View>
@@ -89,7 +87,10 @@ const PlaylistDetail = ({ navigation, route }) => {
         data={songs}
         style={styles.containerList}
         keyExtractor={(item) => item.number}
-        onDragEnd={({ songs }) => setSongs(songs)}
+        onDragEnd={() => setSongs(songs)}
+        ItemSeparatorComponent={Separator}
+        ListHeaderComponent={() => <Separator />}
+        ListFooterComponent={() => <Separator />}
         renderItem={(item) => (
           <PlaylistListItemDragable
             item={item}

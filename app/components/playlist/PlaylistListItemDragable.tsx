@@ -23,8 +23,8 @@ const PlaylistListItemDragable = (props, { item, drag, isActive }: RenderItemPar
         onPress={props.onPress}
         onLongPress={props.item.drag}
         disabled={props.item.isActive}
+        style={[styles.listItem,styles[`background${theme}`]]}
       >
-        <View style={styles.listItem}>
           <View style={styles.containerLeftIcon}>
             <Ionicons
               name={"menu"}
@@ -50,7 +50,6 @@ const PlaylistListItemDragable = (props, { item, drag, isActive }: RenderItemPar
               color={theme === "light" ? "black" : "white"}
             />
           </View>
-        </View>
       </TouchableOpacity>
     </ScaleDecorator>
   );
@@ -96,4 +95,12 @@ const styles = StyleSheet.create({
   textlight: {
     color: colors.black,
   },
+  backgroundlight: {
+    backgroundColor: colors.light
+    
+  },
+  backgrounddark: {
+    backgroundColor: colors.dark
+
+  }
 });

@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, SafeAreaView, FlatList } from "react-native";
+import { StyleSheet, SafeAreaView, FlatList, Alert } from "react-native";
 import { StatusBar } from "expo-status-bar";
 
 import { ThemeContext } from "../../util/ThemeManager";
@@ -10,19 +10,35 @@ const PlaylistList = (props) => {
   const { theme } = React.useContext(ThemeContext);
   const Playlists = props.route.params.playlists;
 
+  const onDeleteItem = () =>
+    Alert.alert("Vymazať", "Naozaj chcete tento playlist vymazať?", [
+      {
+        text: "Zrušiť",
+        onPress: () => console.log("Cancel Pressed"),
+        style: "cancel",
+      },
+      {
+        text: "Odstrániť",
+        onPress: () => console.log("Delete Pressed"),
+        style: "destructive",
+      },
+    ]);
+
   return (
     <SafeAreaView style={[styles.container, styles[`container${theme}`]]}>
       <FlatList
         data={Playlists}
         contentOffset={{ x: 0, y: -10 }}
-        keyExtractor={(item) => item.number}
+        keyExtractor={(item) => item.number.toString()}
+        numColumns={2}
         renderItem={({ item }) => {
           return (
             <PlaylistItem
               item={item}
-              onPress={() =>
+              onPressItem={() =>
                 props.navigation.push("PlaylistDetail", { playlist: item })
               }
+              onPressIcon={onDeleteItem}
             />
           );
         }}

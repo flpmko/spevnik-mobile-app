@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   StyleSheet,
   Text,
@@ -15,9 +15,10 @@ import { activateKeepAwake, deactivateKeepAwake } from "expo-keep-awake";
 import { ThemeContext } from "../util/ThemeManager";
 import colors from "../config/colors";
 import Separator from "../components/list/Separator";
+import Slider from "@react-native-community/slider";
 
 const SettingsScreen = () => {
-  const { toggleTheme, theme, fontSize, changeFontSize } =
+  const { toggleTheme, theme, fontSize, resetFontSize, setFontSize } =
     React.useContext(ThemeContext);
   const [isThemeEnabled, setIsThemeEnabled] = useState(
     theme === "dark" ? true : false
@@ -50,13 +51,16 @@ const SettingsScreen = () => {
     toggleLockSwitch();
   };
 
-  const handleFontPress = (param) => {
-    changeFontSize(param);
-  };
-
   const handleLinkPress = (route) => {
     Linking.openURL(route);
   };
+
+  const handleSliderDrag = useCallback(
+    (value) => {
+      setFontSize(value);
+    },
+    [setFontSize]
+  );
 
   const textStyles = StyleSheet.create({
     previewText: {
@@ -90,43 +94,67 @@ const SettingsScreen = () => {
           <Separator />
         </View>
         <View style={styles.containerItem}>
-          <Text style={[styles.textButton, styles[`text${theme}`]]}>
-            Veľkosť textu
+          <View
+            style={{
+              flex: 1,
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexDirection: "row",
+            }}
+          >
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.textButton, styles[`text${theme}`]]}>
+                Veľkosť textu
+              </Text>
+            </View>
+            <View style={{ flexDirection: "row" }}>
+              <Text
+                style={[
+                  textStyles.textButton,
+                  styles[`text${theme}`],
+                  { fontSize: 30 },
+                ]}
+              >
+                {fontSize}
+              </Text>
+              <TouchableOpacity
+                style={[styles.sizeButton, styles[`sizeButtonColor${theme}`]]}
+                onPress={resetFontSize}
+              >
+                <Ionicons
+                  name={"ios-refresh"}
+                  size={32}
+                  color={
+                    theme === "dark" ? colors.secondary : colors.primarydark
+                  }
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+        <View style={styles.containerItem}>
+          <Slider
+            style={{ width: "100%" }}
+            value={fontSize}
+            step={1}
+            onSlidingComplete={handleSliderDrag}
+            minimumValue={10}
+            maximumValue={40}
+          />
+        </View>
+        <View style={[styles.containerItem, { paddingBottom: 0 }]}>
+          <Text
+            style={[
+              { fontSize: 13, fontStyle: "italic" },
+              styles[`text${theme}`],
+            ]}
+          >
+            náhľad:
           </Text>
-          <TouchableOpacity
-            style={[styles.sizeButton, styles[`sizeButtonColor${theme}`]]}
-            onPress={() => handleFontPress("decrease")}
-          >
-            <Ionicons
-              name={"ios-remove"}
-              size={32}
-              color={theme === "dark" ? colors.secondary : colors.primarydark}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.sizeButton, styles[`sizeButtonColor${theme}`]]}
-            onPress={() => handleFontPress("increase")}
-          >
-            <Ionicons
-              name={"ios-add"}
-              size={32}
-              color={theme === "dark" ? colors.secondary : colors.primarydark}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.sizeButton, styles[`sizeButtonColor${theme}`]]}
-            onPress={() => handleFontPress("reset")}
-          >
-            <Ionicons
-              name={"ios-refresh"}
-              size={32}
-              color={theme === "dark" ? colors.secondary : colors.primarydark}
-            />
-          </TouchableOpacity>
         </View>
         <View style={styles.containerItem}>
           <Text style={[textStyles.previewText, styles[`text${theme}`]]}>
-            {fontSize}: Hrad prepevný je Pán Boh náš
+            Hrad prepevný je Pán Boh náš
           </Text>
         </View>
         <View style={styles.containerSeparator}>
@@ -209,6 +237,7 @@ const SettingsScreen = () => {
             <Text style={[styles.textButton, styles.textLink]}>
               odkaz na formulár
             </Text>
+            <Ionicons name={"open"} size={32} color={colors.primary} />
           </View>
         </View>
         <View style={styles.containerSeparator}>
@@ -241,7 +270,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "100%",
     alignItems: "center",
-    justifyContent: "flex-start",
+    justifyContent: "space-between",
     padding: 10,
   },
   containerLabel: {

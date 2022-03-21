@@ -8,14 +8,8 @@ export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(colorScheme);
   const [fontSize, setFontSize] = useState(20);
 
-  const changeFontSize = (param) => {
-    if (param === "increase") {
-      if (fontSize < 40) setFontSize(fontSize + 2);
-    } else if (param === "decrease") {
-      if (fontSize > 10) setFontSize(fontSize - 2);
-    } else {
-      setFontSize(20);
-    }
+  const resetFontSize = () => {
+    setFontSize(20);
   };
 
   const toggleTheme = () => {
@@ -28,7 +22,13 @@ export const ThemeProvider = ({ children }) => {
 
   return (
     <ThemeContext.Provider
-      value={{ theme, fontSize, toggleTheme, changeFontSize }}
+      value={{
+        theme,
+        fontSize,
+        toggleTheme,
+        resetFontSize,
+        setFontSize,
+      }}
     >
       {children}
     </ThemeContext.Provider>
