@@ -4,59 +4,42 @@ import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { ThemeContext } from "../../util/ThemeManager";
 import colors from "../../config/colors";
 
-const FilterToken = ({
-  label,
-  handleSearch,
-  query,
-  seasonQuery,
-  setSeasonQuery,
-}) => {
+const FilterToken = ({ label, seasonQuery, handleFilter, setSeasonQuery }) => {
   const { theme } = React.useContext(ThemeContext);
   const [selected, setSelected] = useState(false);
 
   const handleTouch = () => {
     if (!selected) {
-      setSeasonQuery(seasonQuery + label);
-    } else {
       setSeasonQuery("");
+    } else {
+      setSeasonQuery(label);
     }
+    handleFilter();
     setSelected(!selected);
   };
 
-  const styles = StyleSheet.create({
-    containerTop: {
-      paddingRight: 5,
-    },
-    containerToken: {
-      display: "flex",
-      borderColor: colors.primary,
-      borderWidth: 2,
-      borderRadius: 20,
-      alignItems: "center",
-      justifyContent: "center",
+  const selectedStyles = StyleSheet.create({
+    containerTokenSelected: {
       backgroundColor: selected ? colors.primary : colors.light,
     },
-    textToken: {
-      fontSize: 16,
-      paddingHorizontal: 15,
-      paddingVertical: 5,
-      fontWeight: "bold",
-      textAlign: "center",
+    textTokenSelected: {
       color: selected ? colors.light : colors.dark,
-    },
-    textdark: {
-      //   color: colors.light,
-    },
-    textlight: {
-      //   color: colors.dark,
     },
   });
 
   return (
     <View style={styles.containerTop}>
       <TouchableOpacity onPress={handleTouch}>
-        <View style={styles.containerToken}>
-          <Text style={[styles.textToken, styles[`text${theme}`]]}>
+        <View
+          style={[styles.containerToken, selectedStyles.containerTokenSelected]}
+        >
+          <Text
+            style={[
+              styles.textToken,
+              selectedStyles.textTokenSelected,
+              styles[`text${theme}`],
+            ]}
+          >
             {label}
           </Text>
         </View>
@@ -66,3 +49,30 @@ const FilterToken = ({
 };
 
 export default FilterToken;
+
+const styles = StyleSheet.create({
+  containerTop: {
+    paddingRight: 5,
+  },
+  containerToken: {
+    display: "flex",
+    borderColor: colors.primary,
+    borderWidth: 2,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  textToken: {
+    fontSize: 16,
+    paddingHorizontal: 15,
+    paddingVertical: 5,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  textdark: {
+    //   color: colors.light,
+  },
+  textlight: {
+    //   color: colors.dark,
+  },
+});

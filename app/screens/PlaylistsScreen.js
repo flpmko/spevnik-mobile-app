@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState } from "react";
 import {
   View,
   StyleSheet,
@@ -21,7 +21,6 @@ import colors from "../config/colors";
 const PlaylistsScreen = () => {
   const { theme } = React.useContext(ThemeContext);
   const Stack = createNativeStackNavigator();
-  const bottomSheetModalRef = useRef(null);
   const [heartIcon, setHeartIcon] = useState("heart-outline");
   const [visible, setVisible] = useState(false);
   const [newName, setNewName] = useState("");
@@ -74,10 +73,6 @@ const PlaylistsScreen = () => {
     setNewName(input);
   };
 
-  const handlePresentModalPress = useCallback(() => {
-    bottomSheetModalRef.current?.present();
-  }, []);
-
   const handlePress = () => {
     heartIcon === "heart-outline"
       ? setHeartIcon("ios-heart")
@@ -121,26 +116,11 @@ const PlaylistsScreen = () => {
       <Stack.Screen
         name="PlaylistDetail"
         component={PlaylistDetail}
-        bottomSheetRef={bottomSheetModalRef}
-        initialParams={{ bottomSheetRef: bottomSheetModalRef }}
         options={({ route }) => {
           return {
             headerTitle: route.params.playlist.title,
             headerTintColor:
               theme === "dark" ? colors.primarydark : colors.primary,
-            headerRight: () => (
-              <TouchableOpacity onPress={handlePresentModalPress}>
-                <View style={styles.addButtonContainer}>
-                  <Ionicons
-                    name="md-add-circle"
-                    size={32}
-                    color={
-                      theme === "dark" ? colors.primarydark : colors.primary
-                    }
-                  />
-                </View>
-              </TouchableOpacity>
-            ),
           };
         }}
       />

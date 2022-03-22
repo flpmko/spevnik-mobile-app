@@ -2,13 +2,7 @@ import { StyleSheet, ScrollView, View } from "react-native";
 import React from "react";
 import FilterToken from "./FilterToken";
 
-const FilterBar = ({
-  data,
-  handleSearch,
-  query,
-  seasonQuery,
-  setSeasonQuery,
-}) => {
+const FilterBar = ({ data, seasonQuery, setSeasonQuery, handleFilter }) => {
   return (
     <ScrollView
       horizontal={true}
@@ -17,10 +11,9 @@ const FilterBar = ({
     >
       {data.map((filter) => (
         <FilterToken
-          handleSearch={handleSearch}
+          handleFilter={handleFilter}
           seasonQuery={seasonQuery}
           setSeasonQuery={setSeasonQuery}
-          query={query}
           label={filter}
           key={filter}
         />
