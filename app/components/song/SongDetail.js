@@ -175,15 +175,15 @@ const SongDetail = ({ route, navigation }) => {
       </View>
       <ScrollView style={[styles.container, styles[`container${theme}`]]}>
         <View style={styles.containerTitle}>
-          <Text style={[styles.textTitle]}>{route.params.song.title}</Text>
+          <Text style={[styles.textTitle]}>{route.params.song?.title}</Text>
         </View>
         <View style={styles.containerCategory}>
           <Text style={[styles.textCategory, styles[`text${theme}`]]}>
-            {route.params.song.season}
+            {route.params.song?.season}
           </Text>
         </View>
         <View style={styles.containerText}>
-          {route.params.song.verses?.map(function (item, i) {
+          {route.params.song?.verses?.map(function (item, i) {
             return (
               <View style={styles.containerVerse} key={i}>
                 <Text

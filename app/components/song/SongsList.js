@@ -35,7 +35,7 @@ const SongsList = ({ route, navigation }) => {
   // const allSongs = props.route.params.data;
   const { theme } = React.useContext(ThemeContext);
   const [loading, setLoading] = useState(false);
-  const [allSongs, setAllSongs] = useState([{ title: 'žiadne piesne' }]);
+  const [allSongs, setAllSongs] = useState();
   const [songs, setSongs] = useState(allSongs);
   const [seasonQuery, setSeasonQuery] = useState('');
   const [query, setQuery] = useState('');
@@ -115,6 +115,7 @@ const SongsList = ({ route, navigation }) => {
     if (netInfo.isInternetReachable) {
       await fetchSongs();
     }
+    sortHymns();
     setLoading(false);
   };
 
@@ -147,16 +148,19 @@ const SongsList = ({ route, navigation }) => {
     if (seasonQuery === '') {
       setSongs(allSongs);
     } else {
-      setSongs(
-        allSongs.filter(function (el) {
-          return el.season == seasonQuery;
-        })
-      );
+      const myData = [].concat(allSongs).filter(function (el) {
+        return el?.season == seasonQuery;
+      });
+      setSongs(myData);
     }
   };
 
   // sort list of hymns as ascending based on numbers
-  const sortHymns = () => {};
+  const sortHymns = () => {
+    const myData = songs.sort((a, b) => a?.number - b?.number);
+    setAllSongs(myData);
+    setSongs(myData);
+  };
 
   const goToSong = (item) => {
     navigation.push('SongDetail', { song: item });

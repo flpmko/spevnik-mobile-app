@@ -1,11 +1,11 @@
-import React from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import React from 'react';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { ThemeContext } from "../../util/ThemeManager";
-import SongDetail from "./SongDetail";
-import SongsList from "./SongsList";
+import { ThemeContext } from '../../util/ThemeManager';
+import SongDetail from './SongDetail';
+import SongsList from './SongsList';
 
-import colors from "../../config/colors";
+import colors from '../../config/colors';
 
 const SongsPage = ({ screenTitle, data, filters }) => {
   const { theme } = React.useContext(ThemeContext);
@@ -22,7 +22,7 @@ const SongsPage = ({ screenTitle, data, filters }) => {
         options={{
           headerTitle: screenTitle,
           headerTintColor:
-            theme === "dark" ? colors.primarydark : colors.primary,
+            theme === 'dark' ? colors.primarydark : colors.primary,
         }}
       />
       <Stack.Screen
@@ -30,9 +30,9 @@ const SongsPage = ({ screenTitle, data, filters }) => {
         component={SongDetail}
         options={({ route }) => {
           return {
-            headerTitle: "Pieseň č. " + route.params.song.number,
+            headerTitle: 'Pieseň č. ' + route.params.song?.number,
             headerTintColor:
-              theme === "dark" ? colors.primarydark : colors.primary,
+              theme === 'dark' ? colors.primarydark : colors.primary,
           };
         }}
       />

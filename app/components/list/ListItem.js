@@ -1,9 +1,9 @@
-import React from "react";
-import { Ionicons } from "@expo/vector-icons";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import React from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
-import { ThemeContext } from "../../util/ThemeManager";
-import colors from "../../config/colors";
+import { ThemeContext } from '../../util/ThemeManager';
+import colors from '../../config/colors';
 
 const ListItem = ({ item, onPress }) => {
   const { theme } = React.useContext(ThemeContext);
@@ -12,7 +12,7 @@ const ListItem = ({ item, onPress }) => {
       <View style={styles.listItem}>
         <View style={styles.containerNumber}>
           <Text style={[styles.listItemNumber, styles[`text${theme}`]]}>
-            {item.number}
+            {item?.number}
           </Text>
         </View>
         <View style={styles.containerName}>
@@ -20,13 +20,13 @@ const ListItem = ({ item, onPress }) => {
             style={[styles.listItemName, styles[`text${theme}`]]}
             numberOfLines={1}
           >
-            {item.title}
+            {item?.title}
           </Text>
         </View>
         <View style={styles.containerIcon}>
           <Ionicons
-            name={"chevron-forward"}
-            color={theme === "light" ? "black" : "white"}
+            name={'chevron-forward'}
+            color={theme === 'light' ? 'black' : 'white'}
           />
         </View>
       </View>
@@ -39,28 +39,28 @@ export default ListItem;
 const styles = StyleSheet.create({
   containerIcon: {
     flex: 1,
-    alignItems: "flex-end",
-    justifyContent: "center",
+    alignItems: 'flex-end',
+    justifyContent: 'center',
   },
   containerName: {
     flex: 10,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   containerNumber: {
     flex: 2,
     paddingRight: 10,
-    textAlign: "right",
+    textAlign: 'right',
   },
   listItem: {
     flex: 1,
     paddingVertical: 10,
     paddingRight: 10,
-    flexDirection: "row",
+    flexDirection: 'row',
   },
   listItemNumber: {
     fontSize: 20,
-    fontWeight: "bold",
-    textAlign: "right",
+    fontWeight: 'bold',
+    textAlign: 'right',
   },
   listItemName: {
     fontSize: 18,
