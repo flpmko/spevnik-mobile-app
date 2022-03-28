@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback } from 'react';
 import {
   StyleSheet,
   Text,
@@ -7,24 +7,32 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import * as Linking from "expo-linking";
-import { activateKeepAwake, deactivateKeepAwake } from "expo-keep-awake";
+  Alert,
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import * as Linking from 'expo-linking';
+import { activateKeepAwake, deactivateKeepAwake } from 'expo-keep-awake';
 
-import { ThemeContext } from "../util/ThemeManager";
-import colors from "../config/colors";
-import Separator from "../components/list/Separator";
-import Slider from "@react-native-community/slider";
+import { ThemeContext } from '../util/ThemeManager';
+import colors from '../config/colors';
+import Separator from '../components/list/Separator';
+import Slider from '@react-native-community/slider';
+import { removeData } from '../util/LocalStorage';
 
 const SettingsScreen = () => {
-  const { toggleTheme, theme, fontSize, resetFontSize, setFontSize } =
-    React.useContext(ThemeContext);
+  const {
+    toggleTheme,
+    theme,
+    fontSize,
+    resetFontSize,
+    setFontSize,
+    resetFavs,
+    resetPlays,
+  } = React.useContext(ThemeContext);
   const [isThemeEnabled, setIsThemeEnabled] = useState(
-    theme === "dark" ? true : false
+    theme === 'dark' ? true : false
   );
   const [isLockEnabled, setIsLockEnabled] = useState(false);
-  const [isRotationEnabled, setIsRotationEnabled] = useState(false);
 
   const toggleThemeSwitch = () => {
     setIsThemeEnabled((previousIsThemeEnabled) => !previousIsThemeEnabled);
@@ -33,12 +41,6 @@ const SettingsScreen = () => {
 
   const toggleLockSwitch = () => {
     setIsLockEnabled((previousIsLockEnabled) => !previousIsLockEnabled);
-  };
-
-  const toggleRotationSwitch = () => {
-    setIsRotationEnabled(
-      (previousIsRotationEnabled) => !previousIsRotationEnabled
-    );
   };
 
   const activateSleepLock = () => {
@@ -62,6 +64,28 @@ const SettingsScreen = () => {
     [setFontSize]
   );
 
+  const clearCache = async (key) => {
+    if (key === 'playlisty') {
+      await resetPlays();
+    } else {
+      await resetFavs();
+    }
+  };
+
+  const onDeleteItem = (item) =>
+    Alert.alert('Vymazať', 'Naozaj chcete vymazať ' + item + '?', [
+      {
+        text: 'Zrušiť',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
+      },
+      {
+        text: 'Odstrániť',
+        onPress: () => clearCache(item),
+        style: 'destructive',
+      },
+    ]);
+
   const textStyles = StyleSheet.create({
     previewText: {
       fontSize: fontSize,
@@ -70,7 +94,7 @@ const SettingsScreen = () => {
 
   return (
     <SafeAreaView style={[styles.container, styles[`container${theme}`]]}>
-      <ScrollView style={{ alignSelf: "stretch", paddingTop: 10 }}>
+      <ScrollView style={{ alignSelf: 'stretch', paddingTop: 10 }}>
         <View style={styles.containerLabel}>
           <Text style={[styles.textLabel]}>Vzhľad</Text>
         </View>
@@ -97,9 +121,9 @@ const SettingsScreen = () => {
           <View
             style={{
               flex: 1,
-              alignItems: "center",
-              justifyContent: "space-between",
-              flexDirection: "row",
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexDirection: 'row',
             }}
           >
             <View style={{ flex: 1 }}>
@@ -107,7 +131,7 @@ const SettingsScreen = () => {
                 Veľkosť textu
               </Text>
             </View>
-            <View style={{ flexDirection: "row" }}>
+            <View style={{ flexDirection: 'row' }}>
               <Text
                 style={[
                   textStyles.textButton,
@@ -122,10 +146,10 @@ const SettingsScreen = () => {
                 onPress={resetFontSize}
               >
                 <Ionicons
-                  name={"ios-refresh"}
+                  name={'ios-refresh'}
                   size={32}
                   color={
-                    theme === "dark" ? colors.secondary : colors.primarydark
+                    theme === 'dark' ? colors.secondary : colors.primarydark
                   }
                 />
               </TouchableOpacity>
@@ -134,7 +158,7 @@ const SettingsScreen = () => {
         </View>
         <View style={styles.containerItem}>
           <Slider
-            style={{ width: "100%" }}
+            style={{ width: '100%' }}
             value={fontSize}
             step={1}
             onSlidingComplete={handleSliderDrag}
@@ -145,7 +169,7 @@ const SettingsScreen = () => {
         <View style={[styles.containerItem, { paddingBottom: 0 }]}>
           <Text
             style={[
-              { fontSize: 13, fontStyle: "italic" },
+              { fontSize: 13, fontStyle: 'italic' },
               styles[`text${theme}`],
             ]}
           >
@@ -184,18 +208,40 @@ const SettingsScreen = () => {
         <View style={styles.containerSeparator}>
           <Separator />
         </View>
+        <View style={styles.containerLabel}>
+          <Text style={[styles.textLabel]}>Cache</Text>
+        </View>
+        <View style={styles.containerSeparator}>
+          <Separator />
+        </View>
         <View style={styles.containerItem}>
           <Text style={[styles.textButton, styles[`text${theme}`]]}>
-            Uzamykanie otáčania
+            Vymazať obľúbené
           </Text>
-          <Switch
-            style={{ paddingLeft: 10 }}
-            ios_backgroundColor={colors.light_placeholder}
-            trackColor={{ false: colors.light_placeholder, true: colors.green }}
-            thumbColor={isThemeEnabled ? colors.darkergray : colors.lightergray}
-            onValueChange={toggleRotationSwitch}
-            value={isRotationEnabled}
-          />
+          <View style={styles.containerRight}>
+            <Ionicons
+              name={'ios-trash-bin'}
+              size={32}
+              color={colors.red}
+              onPress={() => onDeleteItem('obľubené')}
+            />
+          </View>
+        </View>
+        <View style={styles.containerSeparator}>
+          <Separator />
+        </View>
+        <View style={styles.containerItem}>
+          <Text style={[styles.textButton, styles[`text${theme}`]]}>
+            Vymazať playlisty
+          </Text>
+          <View style={styles.containerRight}>
+            <Ionicons
+              name={'ios-trash-bin'}
+              size={32}
+              color={colors.red}
+              onPress={() => onDeleteItem('playlisty')}
+            />
+          </View>
         </View>
         <View style={styles.containerSeparator}>
           <Separator />
@@ -214,13 +260,13 @@ const SettingsScreen = () => {
             <Text
               style={[styles.textButton, styles.textLink]}
               onPress={() =>
-                handleLinkPress("https://github.com/flpmko/spevnik-mobile-app")
+                handleLinkPress('https://github.com/flpmko/spevnik-mobile-app')
               }
             >
               odkaz na repozitár
             </Text>
             <Ionicons
-              name={"ios-logo-github"}
+              name={'ios-logo-github'}
               size={32}
               color={colors.primary}
             />
@@ -237,7 +283,7 @@ const SettingsScreen = () => {
             <Text style={[styles.textButton, styles.textLink]}>
               odkaz na formulár
             </Text>
-            <Ionicons name={"open"} size={32} color={colors.primary} />
+            <Ionicons name={'open'} size={32} color={colors.primary} />
           </View>
         </View>
         <View style={styles.containerSeparator}>
@@ -258,33 +304,33 @@ export default SettingsScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "100%",
+    width: '100%',
   },
   containerSeparator: {
-    width: "100%",
+    width: '100%',
     paddingVertical: 10,
   },
   containerItem: {
-    display: "flex",
+    display: 'flex',
     flex: 1,
-    flexDirection: "row",
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     padding: 10,
   },
   containerLabel: {
-    alignItems: "center",
+    alignItems: 'center',
     paddingTop: 30,
   },
   containerRight: {
-    marginLeft: "auto",
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
+    marginLeft: 'auto',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   containerFooter: {
-    alignItems: "center",
+    alignItems: 'center',
     paddingTop: 50,
     paddingBottom: 20,
   },
@@ -317,7 +363,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lightgray,
   },
   sizeButtonColordark: {
-    backgroundColor: "#767577",
+    backgroundColor: '#767577',
   },
   textdark: {
     color: colors.light,

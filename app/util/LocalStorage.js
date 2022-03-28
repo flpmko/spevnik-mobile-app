@@ -35,4 +35,18 @@ const getStoredObjectData = async (key) => {
   }
 };
 
-export { getStoredData, getStoredObjectData, storeData, storeObjectData };
+const removeData = async (key) => {
+  try {
+    await AsyncStorage.removeItem(key);
+  } catch (e) {
+    console.log(e.message);
+  }
+};
+
+export {
+  getStoredData,
+  getStoredObjectData,
+  storeData,
+  storeObjectData,
+  removeData,
+};

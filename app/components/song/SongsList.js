@@ -38,9 +38,11 @@ const SongsList = ({ route, navigation }) => {
   };
 
   // const allSongs = props.route.params.data;
-  const { theme } = React.useContext(ThemeContext);
+  const { theme, favorites } = React.useContext(ThemeContext);
   const [loading, setLoading] = useState(false);
-  const [allSongs, setAllSongs] = useState();
+  const [allSongs, setAllSongs] = useState(
+    route.params.filters ? undefined : favorites
+  );
   const [songs, setSongs] = useState(allSongs);
   const [seasonQuery, setSeasonQuery] = useState('');
   const [query, setQuery] = useState('');
@@ -55,39 +57,6 @@ const SongsList = ({ route, navigation }) => {
     'Trojjediný',
     'Cirkev',
   ];
-
-  const fetchSongs = async () => {
-    const data = await getDoc(hymnsRef);
-    const lastChangeDb = data.get('lastChange').valueOf();
-    const hymnsData = data.get('all');
-    const lastChangeLocal = await getStoredData('lastChange');
-    if (lastChangeLocal) {
-      if (lastChangeLocal !== lastChangeDb) {
-        storeData('lastChange', lastChangeDb);
-        storeObjectData('hymnsData', hymnsData);
-        setAllSongs(hymnsData);
-        setSongs(hymnsData);
-      }
-    }
-  };
-
-  // initialize from local storage
-  const initFromLocal = async () => {
-    const data = await getStoredObjectData('hymnsData');
-    setAllSongs(data);
-    setSongs(data);
-  };
-
-  const initializeData = async () => {
-    setLoading(true);
-    await initFromLocal();
-    const netInfo = await NetInfo.fetch();
-    if (netInfo.isInternetReachable) {
-      await fetchSongs();
-    }
-    sortHymns();
-    setLoading(false);
-  };
 
   // search helper function
   const contains = ({ number }, input) => {
@@ -125,20 +94,51 @@ const SongsList = ({ route, navigation }) => {
     }
   };
 
-  // sort list of hymns as ascending based on numbers
-  const sortHymns = () => {
-    const myData = songs?.sort((a, b) => a?.number - b?.number);
-    setAllSongs(myData);
-    setSongs(myData);
-  };
-
   const goToSong = (item) => {
     navigation.push('SongDetail', { song: item });
   };
 
   useEffect(() => {
-    initializeData();
+    const setup = async () => {
+      setLoading(true);
+      let locData;
+      if (route.params.filters) {
+        locData = await getStoredObjectData(
+          route.params.filters ? 'hymnsData' : 'favorites'
+        );
+      } else {
+        locData = favorites;
+      }
+      locData.sort((a, b) => a?.number - b?.number);
+      setAllSongs(locData);
+      setSongs(locData);
+      if (route.params.filters) {
+        const netInfo = await NetInfo.fetch();
+        if (netInfo.isInternetReachable) {
+          const data = await getDoc(hymnsRef);
+          const lastChangeDb = data.get('lastChange').valueOf();
+          const hymnsData = data
+            .get('all')
+            .sort((a, b) => a?.number - b?.number);
+          const lastChangeLocal = await getStoredData('lastChange');
+          if (lastChangeLocal) {
+            if (lastChangeLocal !== lastChangeDb) {
+              await storeData('lastChange', lastChangeDb);
+              await storeObjectData('hymnsData', hymnsData);
+              setAllSongs(hymnsData);
+              setSongs(hymnsData);
+            }
+          }
+        }
+      }
+      setLoading(false);
+    };
+    setup();
   }, []);
+
+  useEffect(() => {
+    setSongs(route.params.filters ? songs : favorites);
+  }, [favorites]);
 
   return (
     <SafeAreaView style={[styles.container, styles[`container${theme}`]]}>

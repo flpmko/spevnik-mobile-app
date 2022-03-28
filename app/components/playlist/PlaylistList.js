@@ -1,28 +1,37 @@
-import React from "react";
-import { StyleSheet, SafeAreaView, FlatList, Alert } from "react-native";
-import { StatusBar } from "expo-status-bar";
+import React from 'react';
+import { StyleSheet, SafeAreaView, FlatList, Alert } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 
-import { ThemeContext } from "../../util/ThemeManager";
-import PlaylistItem from "./PlaylistItem";
-import colors from "../../config/colors";
+import { ThemeContext } from '../../util/ThemeManager';
+import PlaylistItem from './PlaylistItem';
+import colors from '../../config/colors';
+import { storeObjectData } from '../../util/LocalStorage';
 
 const PlaylistList = (props) => {
-  const { theme } = React.useContext(ThemeContext);
-  const Playlists = props.route.params.playlists;
+  const { theme, playlists, setPlaylists } = React.useContext(ThemeContext);
+  const Playlists = playlists; //props.route.params.playlists;
 
-  const onDeleteItem = () =>
-    Alert.alert("Vymazať", "Naozaj chcete tento playlist vymazať?", [
+  const onDeleteItem = (item) =>
+    Alert.alert('Vymazať', 'Naozaj chcete tento playlist vymazať?', [
       {
-        text: "Zrušiť",
-        onPress: () => console.log("Cancel Pressed"),
-        style: "cancel",
+        text: 'Zrušiť',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
       },
       {
-        text: "Odstrániť",
-        onPress: () => console.log("Delete Pressed"),
-        style: "destructive",
+        text: 'Odstrániť',
+        onPress: () => removePlaylist(item),
+        style: 'destructive',
       },
     ]);
+
+  const removePlaylist = async (item) => {
+    if (playlists) {
+      const updatedPlaylists = playlists.filter((i) => i.title != item.title);
+      setPlaylists(updatedPlaylists);
+      await storeObjectData('playlists', updatedPlaylists);
+    }
+  };
 
   return (
     <SafeAreaView style={[styles.container, styles[`container${theme}`]]}>
@@ -36,14 +45,14 @@ const PlaylistList = (props) => {
             <PlaylistItem
               item={item}
               onPressItem={() =>
-                props.navigation.push("PlaylistDetail", { playlist: item })
+                props.navigation.push('PlaylistDetail', { playlist: item })
               }
-              onPressIcon={onDeleteItem}
+              onPressIcon={() => onDeleteItem(item)}
             />
           );
         }}
       />
-      <StatusBar style={theme === "dark" ? "light" : "dark"} />
+      <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
     </SafeAreaView>
   );
 };

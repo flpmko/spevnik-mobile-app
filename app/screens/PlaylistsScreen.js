@@ -17,27 +17,36 @@ import DialogInput from '../components/dialog/DialogInput';
 import playlists_data from '../data/playlists_data';
 
 import colors from '../config/colors';
+import { storeObjectData } from '../util/LocalStorage';
 
 const PlaylistsScreen = () => {
-  const { theme } = React.useContext(ThemeContext);
+  const { theme, playlists, setPlaylists } = React.useContext(ThemeContext);
   const Stack = createNativeStackNavigator();
   const [heartIcon, setHeartIcon] = useState('heart-outline');
   const [visible, setVisible] = useState(false);
   const [newName, setNewName] = useState('');
-  const [playlists, setPlaylists] = useState(playlists_data);
+  // const [playlists, setPlaylists] = useState(playlists_data);
 
-  const createNewPlaylist = (title) => {
+  const createNewPlaylist = async (title) => {
     // generate an unused id
     let newNumber = 1;
-    let sortedListByIds = playlists.slice().sort((a, b) => a.number - b.number);
-    for (let item of sortedListByIds) {
-      if (newNumber === item.number) {
-        newNumber++;
+    if (playlists) {
+      let sortedListByIds = playlists
+        .slice()
+        .sort((a, b) => a.number - b.number);
+      for (let item of sortedListByIds) {
+        if (newNumber === item.number) {
+          newNumber++;
+        }
       }
+      const currentList = playlists;
+      const newPlaylist = { number: newNumber, title: title, songs: [] };
+      setPlaylists([...currentList, newPlaylist]);
+    } else {
+      const newPlaylist = { number: newNumber, title: title, songs: [] };
+      setPlaylists([newPlaylist]);
     }
-    const currentList = playlists;
-    const newPlaylist = { number: newNumber, title: title, songs: [] };
-    setPlaylists([...currentList, newPlaylist]);
+    await storeObjectData('playlists', playlists);
     setNewName('');
   };
 

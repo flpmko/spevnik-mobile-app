@@ -31,8 +31,9 @@ import playlists_data from '../../data/playlists_data';
 import Separator from '../list/Separator';
 
 const SongDetail = ({ route, navigation }) => {
-  const Playlists = playlists_data;
-  const { theme, fontSize } = React.useContext(ThemeContext);
+  const { theme, fontSize, favorites, setFavorites, playlists } =
+    React.useContext(ThemeContext);
+  const Playlists = playlists;
   const [isPopoverVisible, setisPopoverVisible] = useState(false);
   const [heartIcon, setHeartIcon] = useState('heart-outline');
   const bottomSheetModalRef = useRef(null);
@@ -46,12 +47,27 @@ const SongDetail = ({ route, navigation }) => {
 
   const renderItem = useCallback(
     ({ item }) => (
-      <TouchableOpacity style={styles.containerItem}>
+      <TouchableOpacity
+        style={styles.containerItem}
+        onPress={() => addToPlaylist(item)}
+      >
         <Text style={styles.textModal}>{item.title}</Text>
       </TouchableOpacity>
     ),
     []
   );
+
+  const addToPlaylist = (playlist) => {
+    const song = route.params.song;
+    var index = playlist.songs.findIndex((x) => x.title == song.title);
+    if (index === -1) {
+      playlist.songs.push(song);
+      storeObjectData('playlists', playlists);
+    } else {
+      alert('Pieseň už v tomto playliste je');
+    }
+    handleDismissModalPress();
+  };
 
   const textStyles = StyleSheet.create({
     textText: {
@@ -78,35 +94,27 @@ const SongDetail = ({ route, navigation }) => {
   };
 
   const addFavorite = async () => {
-    const favorites = await getStoredObjectData('favorites');
     if (favorites) {
       favorites.push(route.params.song);
+      setFavorites(favorites);
       await storeObjectData('favorites', favorites);
     } else {
       const newFavorites = [route.params.song];
       await storeObjectData('favorites', newFavorites);
     }
-    console.log(favorites);
   };
 
   const removeFavorite = async () => {
-    const favorites = await getStoredObjectData('favorites');
     if (favorites) {
-      const updatedFavorites = favorites
-        .filter((item) => item.title != route.params.song.title)
-        .map(({ number, title, verses, season }) => ({
-          number,
-          title,
-          verses,
-          season,
-        }));
+      const updatedFavorites = favorites.filter(
+        (item) => item.title != route.params.song.title
+      );
+      setFavorites(updatedFavorites);
       await storeObjectData('favorites', updatedFavorites);
-      console.log(updatedFavorites);
     }
   };
 
   const isFavorite = async () => {
-    const favorites = await getStoredObjectData('favorites');
     if (favorites?.some((item) => route.params.song.title === item.title)) {
       setHeartIcon('ios-heart');
     }
@@ -139,7 +147,6 @@ const SongDetail = ({ route, navigation }) => {
   }, []);
 
   useLayoutEffect(() => {
-    console.log('render');
     navigation.setOptions({
       headerRight: () => (
         <View style={styles.containerAddButton}>
