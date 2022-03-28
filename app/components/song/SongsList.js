@@ -10,11 +10,16 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { filter, _ } from 'lodash';
 import { doc, getDoc } from 'firebase/firestore';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
 
 import { db } from '../../../firebase-config';
 import { ThemeContext } from '../../util/ThemeManager';
+import {
+  getStoredData,
+  getStoredObjectData,
+  storeData,
+  storeObjectData,
+} from '../../util/LocalStorage';
 import ListItem from '../list/ListItem';
 import Separator from '../list/Separator';
 import SearchBar from '../SearchBar';
@@ -50,41 +55,6 @@ const SongsList = ({ route, navigation }) => {
     'Trojjediný',
     'Cirkev',
   ];
-
-  const storeData = async (key, value) => {
-    try {
-      await AsyncStorage.setItem(key, value);
-    } catch (e) {
-      console.log(e.message);
-    }
-  };
-
-  const getStoredData = async (key) => {
-    try {
-      return await AsyncStorage.getItem(key);
-    } catch (e) {
-      console.log(e.message);
-    }
-    return null;
-  };
-
-  const storeObjectData = async (key, object) => {
-    try {
-      const jsonValue = JSON.stringify(object);
-      await AsyncStorage.setItem(key, jsonValue);
-    } catch (e) {
-      console.log(e.message);
-    }
-  };
-
-  const getStoredObjectData = async (key) => {
-    try {
-      const jsonValue = await AsyncStorage.getItem(key);
-      return jsonValue != null ? JSON.parse(jsonValue) : null;
-    } catch (e) {
-      console.log(e.message);
-    }
-  };
 
   const fetchSongs = async () => {
     const data = await getDoc(hymnsRef);
@@ -157,7 +127,7 @@ const SongsList = ({ route, navigation }) => {
 
   // sort list of hymns as ascending based on numbers
   const sortHymns = () => {
-    const myData = songs.sort((a, b) => a?.number - b?.number);
+    const myData = songs?.sort((a, b) => a?.number - b?.number);
     setAllSongs(myData);
     setSongs(myData);
   };

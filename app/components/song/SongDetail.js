@@ -4,6 +4,7 @@ import React, {
   useState,
   useLayoutEffect,
   useMemo,
+  useEffect,
 } from 'react';
 import {
   StyleSheet,
@@ -19,6 +20,12 @@ import Popover from 'react-native-popover-view/dist/Popover';
 import * as Linking from 'expo-linking';
 
 import { ThemeContext } from '../../util/ThemeManager';
+import {
+  getStoredData,
+  getStoredObjectData,
+  storeData,
+  storeObjectData,
+} from '../../util/LocalStorage';
 import colors from '../../config/colors';
 import playlists_data from '../../data/playlists_data';
 import Separator from '../list/Separator';
@@ -61,9 +68,48 @@ const SongDetail = ({ route, navigation }) => {
   };
 
   const handlePress = () => {
-    heartIcon === 'heart-outline'
-      ? setHeartIcon('ios-heart')
-      : setHeartIcon('heart-outline');
+    if (heartIcon === 'heart-outline') {
+      setHeartIcon('ios-heart');
+      addFavorite();
+    } else {
+      setHeartIcon('heart-outline');
+      removeFavorite();
+    }
+  };
+
+  const addFavorite = async () => {
+    const favorites = await getStoredObjectData('favorites');
+    if (favorites) {
+      favorites.push(route.params.song);
+      await storeObjectData('favorites', favorites);
+    } else {
+      const newFavorites = [route.params.song];
+      await storeObjectData('favorites', newFavorites);
+    }
+    console.log(favorites);
+  };
+
+  const removeFavorite = async () => {
+    const favorites = await getStoredObjectData('favorites');
+    if (favorites) {
+      const updatedFavorites = favorites
+        .filter((item) => item.title != route.params.song.title)
+        .map(({ number, title, verses, season }) => ({
+          number,
+          title,
+          verses,
+          season,
+        }));
+      await storeObjectData('favorites', updatedFavorites);
+      console.log(updatedFavorites);
+    }
+  };
+
+  const isFavorite = async () => {
+    const favorites = await getStoredObjectData('favorites');
+    if (favorites?.some((item) => route.params.song.title === item.title)) {
+      setHeartIcon('ios-heart');
+    }
   };
 
   const handlePresentModalPress = useCallback(() => {
@@ -88,7 +134,12 @@ const SongDetail = ({ route, navigation }) => {
     </TouchableOpacity>
   ));
 
+  useEffect(() => {
+    isFavorite();
+  }, []);
+
   useLayoutEffect(() => {
+    console.log('render');
     navigation.setOptions({
       headerRight: () => (
         <View style={styles.containerAddButton}>
