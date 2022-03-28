@@ -24,11 +24,6 @@ const PlaylistsScreen = () => {
   const [heartIcon, setHeartIcon] = useState("heart-outline");
   const [visible, setVisible] = useState(false);
   const [newName, setNewName] = useState("");
-  // const [playlists, setPlaylists] = useState([
-  //   { number: 1, title: "12.3.2022", songs: {} },
-  //   { number: 2, title: "Mladeznicke SB", songs: {} },
-  //   { number: 3, title: "Stedry vecer 2022", songs: {} },
-  // ]);
   const [playlists, setPlaylists] = useState(playlists_data);
 
   const createNewPlaylist = (title) => {

@@ -16,6 +16,8 @@ const FilterToken = ({ label, seasonQuery, handleFilter, setSeasonQuery }) => {
     }
     handleFilter();
     setSelected(!selected);
+    console.log("seasonQuery", seasonQuery);
+    console.log("selected", selected);
   };
 
   const selectedStyles = StyleSheet.create({

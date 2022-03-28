@@ -4,7 +4,7 @@ import React, {
   useState,
   useLayoutEffect,
   useMemo,
-} from "react";
+} from 'react';
 import {
   StyleSheet,
   Text,
@@ -12,35 +12,35 @@ import {
   ScrollView,
   TouchableOpacity,
   View,
-} from "react-native";
-import { BottomSheetModal, BottomSheetFlatList } from "@gorhom/bottom-sheet";
-import { Ionicons } from "@expo/vector-icons";
-import Popover from "react-native-popover-view/dist/Popover";
-import * as Linking from "expo-linking";
+} from 'react-native';
+import { BottomSheetModal, BottomSheetFlatList } from '@gorhom/bottom-sheet';
+import { Ionicons } from '@expo/vector-icons';
+import Popover from 'react-native-popover-view/dist/Popover';
+import * as Linking from 'expo-linking';
 
-import { ThemeContext } from "../../util/ThemeManager";
-import colors from "../../config/colors";
-import playlists_data from "../../data/playlists_data";
-import Separator from "../list/Separator";
+import { ThemeContext } from '../../util/ThemeManager';
+import colors from '../../config/colors';
+import playlists_data from '../../data/playlists_data';
+import Separator from '../list/Separator';
 
 const SongDetail = ({ route, navigation }) => {
   const Playlists = playlists_data;
   const { theme, fontSize } = React.useContext(ThemeContext);
   const [isPopoverVisible, setisPopoverVisible] = useState(false);
-  const [heartIcon, setHeartIcon] = useState("heart-outline");
+  const [heartIcon, setHeartIcon] = useState('heart-outline');
   const bottomSheetModalRef = useRef(null);
 
   // variables
-  const snapPoints = useMemo(() => ["25%", "50%", "90%"], []);
+  const snapPoints = useMemo(() => ['25%', '50%', '90%'], []);
 
   const handleSheetChanges = useCallback((index) => {
-    console.log("handleSheetChanges", index);
+    console.log('handleSheetChanges', index);
   }, []);
 
   const renderItem = useCallback(
     ({ item }) => (
-      <TouchableOpacity style={styles.itemContainer}>
-        <Text style={styles.modalText}>{item.title}</Text>
+      <TouchableOpacity style={styles.containerItem}>
+        <Text style={styles.textModal}>{item.title}</Text>
       </TouchableOpacity>
     ),
     []
@@ -61,9 +61,9 @@ const SongDetail = ({ route, navigation }) => {
   };
 
   const handlePress = () => {
-    heartIcon === "heart-outline"
-      ? setHeartIcon("ios-heart")
-      : setHeartIcon("heart-outline");
+    heartIcon === 'heart-outline'
+      ? setHeartIcon('ios-heart')
+      : setHeartIcon('heart-outline');
   };
 
   const handlePresentModalPress = useCallback(() => {
@@ -80,11 +80,11 @@ const SongDetail = ({ route, navigation }) => {
       style={{
         flex: 1,
         marginHorizontal: 10,
-        alignItems: "flex-end",
+        alignItems: 'flex-end',
       }}
       onPress={handleDismissModalPress}
     >
-      <Ionicons name={"close"} size={32} color={colors.light_placeholder} />
+      <Ionicons name={'close'} size={32} color={colors.light_placeholder} />
     </TouchableOpacity>
   ));
 
@@ -95,7 +95,7 @@ const SongDetail = ({ route, navigation }) => {
           <Ionicons
             name={heartIcon}
             size={28}
-            color={theme === "dark" ? colors.primarydark : colors.primary}
+            color={theme === 'dark' ? colors.primarydark : colors.primary}
             onPress={handlePress}
           />
           <Popover
@@ -106,9 +106,9 @@ const SongDetail = ({ route, navigation }) => {
             from={
               <TouchableOpacity onPress={togglePopover}>
                 <Ionicons
-                  name={"ellipsis-vertical"}
+                  name={'ellipsis-vertical'}
                   size={28}
-                  color={theme === "dark" ? colors.primarydark : colors.primary}
+                  color={theme === 'dark' ? colors.primarydark : colors.primary}
                 />
               </TouchableOpacity>
             }
@@ -119,10 +119,10 @@ const SongDetail = ({ route, navigation }) => {
                 onPress={handlePresentModalPress}
               >
                 <Ionicons
-                  name={"add"}
+                  name={'add'}
                   size={28}
                   style={styles.iconPopup}
-                  color={theme === "dark" ? colors.primarydark : colors.primary}
+                  color={theme === 'dark' ? colors.primarydark : colors.primary}
                 />
                 <Text style={styles.textPopup}>Pridať do playlistu</Text>
               </TouchableOpacity>
@@ -131,15 +131,15 @@ const SongDetail = ({ route, navigation }) => {
                 style={styles.containerPopup}
                 onPress={() =>
                   handleLinkPress(
-                    "https://github.com/flpmko/spevnik-mobile-app"
+                    'https://github.com/flpmko/spevnik-mobile-app'
                   )
                 }
               >
                 <Ionicons
-                  name={"bug"}
+                  name={'bug'}
                   size={28}
                   style={styles.iconPopup}
-                  color={theme === "dark" ? colors.primarydark : colors.primary}
+                  color={theme === 'dark' ? colors.primarydark : colors.primary}
                 />
                 <Text style={styles.textPopup}>Nahlásiť chybu</Text>
               </TouchableOpacity>
@@ -169,28 +169,38 @@ const SongDetail = ({ route, navigation }) => {
             keyExtractor={(playlist) => playlist.number}
             renderItem={renderItem}
             ListHeaderComponent={renderHeaderComponent}
-            contentContainerStyle={styles.contentContainer}
+            containerContentStyle={styles.containerContent}
           />
         </BottomSheetModal>
       </View>
       <ScrollView style={[styles.container, styles[`container${theme}`]]}>
-        {/* <DropMenu /> */}
-        <View style={styles.titleContainer}>
-          <Text style={[styles.titleText]}>{route.params.song.title}</Text>
+        <View style={styles.containerTitle}>
+          <Text style={[styles.textTitle]}>{route.params.song.title}</Text>
         </View>
-        <View style={styles.categoryContainer}>
-          <Text style={[styles.categoryText, styles[`text${theme}`]]}>
-            {route.params.song.category},
-          </Text>
-          <Text style={[styles.categoryText, styles[`text${theme}`]]}>
-            {" "}
+        <View style={styles.containerCategory}>
+          <Text style={[styles.textCategory, styles[`text${theme}`]]}>
             {route.params.song.season}
           </Text>
         </View>
-        <View style={styles.textContainer}>
-          <Text style={[textStyles.textText, styles[`text${theme}`]]}>
-            {route.params.song.text}
-          </Text>
+        <View style={styles.containerText}>
+          {route.params.song.verses?.map(function (item, i) {
+            return (
+              <View style={styles.containerVerse} key={i}>
+                <Text
+                  style={[
+                    textStyles.textText,
+                    styles[`text${theme}`],
+                    styles.textVerse,
+                  ]}
+                >
+                  {i + 1}.
+                </Text>
+                <Text style={[textStyles.textText, styles[`text${theme}`]]}>
+                  {item}
+                </Text>
+              </View>
+            );
+          })}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -201,9 +211,88 @@ export default SongDetail;
 
 const styles = StyleSheet.create({
   container: {
-    display: "flex",
+    display: 'flex',
     padding: 20,
-    height: "100%",
+    height: '100%',
+  },
+  containerAddButton: {
+    width: 'auto',
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  containerVerse: {
+    paddingVertical: 10,
+  },
+  containerText: {
+    display: 'flex',
+    paddingTop: 30,
+    paddingBottom: 100,
+  },
+  containerPopup: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    paddingVertical: 10,
+  },
+  containerContent: {
+    backgroundColor: 'white',
+  },
+  containerItem: {
+    paddingVertical: 10,
+    margin: 6,
+    borderRadius: 15,
+    borderWidth: 0,
+    backgroundColor: colors.lightgray,
+  },
+  containerTitle: {
+    display: 'flex',
+  },
+  containerCategory: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  containerlight: {
+    backgroundColor: colors.light,
+  },
+  containerdark: {
+    backgroundColor: colors.dark,
+  },
+  iconPopup: {
+    paddingHorizontal: 10,
+  },
+  textPopup: {
+    paddingRight: 10,
+  },
+  textVerse: {
+    fontWeight: 'bold',
+    color: colors.dark_placeholder,
+  },
+  popoverStyle: {
+    backgroundColor: colors.light,
+    opacity: 1,
+    borderRadius: 15,
+  },
+  arrowStyle: {
+    backgroundColor: colors.light,
+  },
+  textModal: {
+    paddingLeft: 30,
+    fontSize: 25,
+  },
+  textTitle: {
+    fontSize: 23,
+    fontWeight: 'bold',
+    color: colors.primary,
+  },
+  textCategory: {
+    fontStyle: 'italic',
+  },
+  textdark: {
+    color: colors.light,
+  },
+  textlight: {
+    color: colors.black,
   },
   shadow: {
     shadowOffset: {
@@ -216,83 +305,9 @@ const styles = StyleSheet.create({
     elevation: 25,
   },
   shadowlight: {
-    shadowColor: "#000",
+    shadowColor: '#000',
   },
   shadowdark: {
-    shadowColor: "#ffffff",
-  },
-  containerAddButton: {
-    width: "auto",
-    display: "flex",
-    flexDirection: "row",
-    // backgroundColor: "transparent",
-  },
-  containerPopup: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    paddingVertical: 10,
-    // backgroundColor: "transparent",
-  },
-  iconPopup: {
-    paddingHorizontal: 10,
-  },
-  textPopup: {
-    paddingRight: 10,
-  },
-  popoverStyle: {
-    backgroundColor: colors.light,
-    opacity: 0.8,
-    borderRadius: 15,
-  },
-  arrowStyle: {
-    backgroundColor: colors.light,
-  },
-  contentContainer: {
-    backgroundColor: "white",
-  },
-  itemContainer: {
-    paddingVertical: 10,
-    margin: 6,
-    borderRadius: 15,
-    borderWidth: 0,
-    backgroundColor: colors.lightgray,
-  },
-  modalText: {
-    paddingLeft: 30,
-    fontSize: 25,
-  },
-  containerlight: {
-    backgroundColor: colors.light,
-  },
-  containerdark: {
-    backgroundColor: colors.dark,
-  },
-  textdark: {
-    color: colors.light,
-  },
-  textlight: {
-    color: colors.black,
-  },
-  titleContainer: {
-    display: "flex",
-  },
-  titleText: {
-    fontSize: 23,
-    fontWeight: "bold",
-    color: colors.primary,
-  },
-  categoryContainer: {
-    display: "flex",
-    flexDirection: "row",
-  },
-  categoryText: {
-    fontStyle: "italic",
-  },
-  textContainer: {
-    display: "flex",
-    paddingTop: 30,
-    paddingBottom: 100,
+    shadowColor: '#ffffff',
   },
 });
