@@ -4,30 +4,37 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { UserContext } from '../../util/UserManager';
 import colors from '../../config/colors';
 
-const FilterToken = ({ label, seasonQuery, handleFilter, setSeasonQuery }) => {
-  const { theme, setActiveFilter } = React.useContext(UserContext);
+const FilterToken = ({ label, handleFilter }) => {
+  const { theme, activeFilter, setActiveFilter } =
+    React.useContext(UserContext);
   const [selected, setSelected] = useState(false);
 
   const handleTouch = () => {
-    if (!selected) {
-      setSeasonQuery('');
-      setActiveFilter('');
+    let filterQuery;
+    if (selected) {
+      filterQuery = '';
     } else {
-      setSeasonQuery(label);
-      setActiveFilter(label);
+      filterQuery = label;
     }
-    handleFilter();
+    setActiveFilter(filterQuery);
+    handleFilter(filterQuery);
     setSelected(!selected);
-    console.log('seasonQuery', seasonQuery);
-    console.log('selected', selected);
   };
 
   const selectedStyles = StyleSheet.create({
-    containerTokenSelected: {
-      backgroundColor: selected ? colors.primary : colors.light,
+    containerTokenSelectedlight: {
+      backgroundColor:
+        activeFilter === label && selected ? colors.primary : colors.light,
     },
-    textTokenSelected: {
-      color: selected ? colors.light : colors.dark,
+    containerTokenSelecteddark: {
+      backgroundColor:
+        activeFilter === label && selected ? colors.primary : colors.darkgray,
+    },
+    textTokenSelectedlight: {
+      color: activeFilter === label && selected ? colors.light : colors.dark,
+    },
+    textTokenSelecteddark: {
+      color: colors.light,
     },
   });
 
@@ -35,13 +42,15 @@ const FilterToken = ({ label, seasonQuery, handleFilter, setSeasonQuery }) => {
     <View style={styles.containerTop}>
       <TouchableOpacity onPress={handleTouch}>
         <View
-          style={[styles.containerToken, selectedStyles.containerTokenSelected]}
+          style={[
+            styles.containerToken,
+            selectedStyles[`containerTokenSelected${theme}`],
+          ]}
         >
           <Text
             style={[
               styles.textToken,
-              selectedStyles.textTokenSelected,
-              styles[`text${theme}`],
+              selectedStyles[`textTokenSelected${theme}`],
             ]}
           >
             {label}
@@ -72,11 +81,5 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     fontWeight: 'bold',
     textAlign: 'center',
-  },
-  textdark: {
-    //   color: colors.light,
-  },
-  textlight: {
-    //   color: colors.dark,
   },
 });

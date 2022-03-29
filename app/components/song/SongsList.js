@@ -34,6 +34,7 @@ import SearchBar from '../SearchBar';
 import SearchFilterBar from '../SearchFilterBar';
 
 import colors from '../../config/colors';
+import songs_data from '../../data/songs_data';
 
 const SongsList = ({ route, navigation }) => {
   // ignore firebase timer warning for android
@@ -46,11 +47,13 @@ const SongsList = ({ route, navigation }) => {
   };
 
   // const allSongs = props.route.params.data;
-  const { theme, favorites, setSeasons, seasons, activeFilter } =
+  const { theme, favorites, seasons, setSeasons } =
     React.useContext(UserContext);
   const [showFilters, setShowFilters] = useState(route.params.filters);
   const [loading, setLoading] = useState(false);
-  const [allSongs, setAllSongs] = useState(showFilters ? undefined : favorites);
+  const [allSongs, setAllSongs] = useState(
+    showFilters ? songs_data : favorites
+  );
   const [songs, setSongs] = useState(allSongs);
   const [hymns, setHymns] = useState([]);
   const [modern, setModern] = useState([]);
@@ -88,12 +91,7 @@ const SongsList = ({ route, navigation }) => {
   // search the list of hymns based on number
   const handleSearch = (input) => {
     let dataSet;
-    // if (seasonQuery) {
-    //   dataSet = songs;
-    // } else {
-    //   dataSet = allSongs;
-    // }
-    dataSet = allSongs;
+    showFilters ? (dataSet = allSongs) : (dataSet = modern);
     const data = filter(dataSet, (song) => {
       return contains(song, input);
     });
@@ -102,14 +100,12 @@ const SongsList = ({ route, navigation }) => {
   };
 
   // filter the list of hymns based on season
-  const handleFilter = () => {
-    // if (seasonQuery === '') {
-    if (activeFilter === '') {
+  const handleFilter = (filterQuery) => {
+    if (filterQuery === '') {
       setSongs(allSongs);
     } else {
       const myData = [].concat(allSongs).filter(function (el) {
-        // return el?.season == seasonQuery;
-        return el?.season == activeFilter;
+        return el?.season == filterQuery;
       });
       setSongs(myData);
     }
@@ -130,11 +126,14 @@ const SongsList = ({ route, navigation }) => {
         locData = favorites;
       }
       locData.sort((a, b) => a?.number - b?.number);
-      setAllSongs(locData);
-      setSongs(locData);
-      setModern(locDataMod);
+      if (locData) {
+        setAllSongs(locData);
+        setSongs(locData);
+      }
+      if (locDataMod) setModern(locDataMod);
       if (showFilters) {
         const netInfo = await NetInfo.fetch();
+        console.log(netInfo);
         if (netInfo.isInternetReachable) {
           const data = await getDoc(hymnsRef);
           const songsDoc = await getDoc(songsRef);

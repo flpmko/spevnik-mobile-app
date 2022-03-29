@@ -1,28 +1,29 @@
-import React from "react";
-import { StyleSheet, View } from "react-native";
-import SearchBar from "./SearchBar";
-import FilterBar from "./filter/FilterBar";
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import SearchBar from './SearchBar';
+import FilterBar from './filter/FilterBar';
 
 const SearchFilterBar = ({
-  filters,
+  // filters,
   handleSearch,
   query,
-  seasonQuery,
-  setSeasonQuery,
   handleFilter,
 }) => {
+  const filters = [
+    'Vianoce',
+    'Advent',
+    'Pôst',
+    'Veľká noc',
+    'Vstúpenie',
+    'Cirkev',
+  ];
   return (
     <View>
       <View>
         <SearchBar handleSearch={handleSearch} query={query} />
       </View>
       <View style={styles.containerFilter}>
-        <FilterBar
-          handleFilter={handleFilter}
-          seasonQuery={seasonQuery}
-          setSeasonQuery={setSeasonQuery}
-          data={filters}
-        />
+        <FilterBar handleFilter={handleFilter} data={filters} />
       </View>
     </View>
   );
