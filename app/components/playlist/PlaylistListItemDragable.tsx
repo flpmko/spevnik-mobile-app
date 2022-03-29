@@ -3,7 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { RenderItemParams, ScaleDecorator } from "react-native-draggable-flatlist";
 
-import { ThemeContext } from "../../util/ThemeManager";
+import { UserContext } from "../../util/UserManager";
 import colors from "../../config/colors";
 
 type Item = {
@@ -15,7 +15,7 @@ type Item = {
 };
 
 const PlaylistListItemDragable = (props, { item, drag, isActive }: RenderItemParams<Item>) => {
-  const { theme } = React.useContext(ThemeContext);
+  const { theme } = React.useContext(UserContext);
 
   return (
     <ScaleDecorator>

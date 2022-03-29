@@ -2,19 +2,23 @@ import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
-import { ThemeContext } from '../../util/ThemeManager';
+import { UserContext } from '../../util/UserManager';
 import colors from '../../config/colors';
 
 const ListItem = ({ item, onPress }) => {
-  const { theme } = React.useContext(ThemeContext);
+  const { theme } = React.useContext(UserContext);
   return (
     <TouchableOpacity onPress={onPress}>
       <View style={styles.listItem}>
-        <View style={styles.containerNumber}>
-          <Text style={[styles.listItemNumber, styles[`text${theme}`]]}>
-            {item?.number}
-          </Text>
-        </View>
+        {item.number ? (
+          <View style={styles.containerNumber}>
+            <Text style={[styles.listItemNumber, styles[`text${theme}`]]}>
+              {item.number}
+            </Text>
+          </View>
+        ) : (
+          <View style={styles.containerFill}></View>
+        )}
         <View style={styles.containerName}>
           <Text
             style={[styles.listItemName, styles[`text${theme}`]]}
@@ -50,6 +54,9 @@ const styles = StyleSheet.create({
     flex: 2,
     paddingRight: 10,
     textAlign: 'right',
+  },
+  containerFill: {
+    paddingRight: 20,
   },
   listItem: {
     flex: 1,

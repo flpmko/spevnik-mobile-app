@@ -13,7 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Linking from 'expo-linking';
 import { activateKeepAwake, deactivateKeepAwake } from 'expo-keep-awake';
 
-import { ThemeContext } from '../util/ThemeManager';
+import { UserContext } from '../util/UserManager';
 import colors from '../config/colors';
 import Separator from '../components/list/Separator';
 import Slider from '@react-native-community/slider';
@@ -28,7 +28,7 @@ const SettingsScreen = () => {
     setFontSize,
     resetFavs,
     resetPlays,
-  } = React.useContext(ThemeContext);
+  } = React.useContext(UserContext);
   const [isThemeEnabled, setIsThemeEnabled] = useState(
     theme === 'dark' ? true : false
   );
@@ -219,12 +219,13 @@ const SettingsScreen = () => {
             Vymazať obľúbené
           </Text>
           <View style={styles.containerRight}>
-            <Ionicons
-              name={'ios-trash-bin'}
-              size={32}
-              color={colors.red}
+            <Text
+              style={[styles.textButton, { color: colors.red }]}
               onPress={() => onDeleteItem('obľubené')}
-            />
+            >
+              vymazať
+            </Text>
+            <Ionicons name={'ios-trash-bin'} size={32} color={colors.red} />
           </View>
         </View>
         <View style={styles.containerSeparator}>
@@ -235,12 +236,13 @@ const SettingsScreen = () => {
             Vymazať playlisty
           </Text>
           <View style={styles.containerRight}>
-            <Ionicons
-              name={'ios-trash-bin'}
-              size={32}
-              color={colors.red}
+            <Text
+              style={[styles.textButton, { color: colors.red }]}
               onPress={() => onDeleteItem('playlisty')}
-            />
+            >
+              vymazať
+            </Text>
+            <Ionicons name={'ios-trash-bin'} size={32} color={colors.red} />
           </View>
         </View>
         <View style={styles.containerSeparator}>

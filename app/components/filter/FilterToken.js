@@ -1,23 +1,25 @@
-import React, { useState } from "react";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
-import { ThemeContext } from "../../util/ThemeManager";
-import colors from "../../config/colors";
+import { UserContext } from '../../util/UserManager';
+import colors from '../../config/colors';
 
 const FilterToken = ({ label, seasonQuery, handleFilter, setSeasonQuery }) => {
-  const { theme } = React.useContext(ThemeContext);
+  const { theme, setActiveFilter } = React.useContext(UserContext);
   const [selected, setSelected] = useState(false);
 
   const handleTouch = () => {
     if (!selected) {
-      setSeasonQuery("");
+      setSeasonQuery('');
+      setActiveFilter('');
     } else {
       setSeasonQuery(label);
+      setActiveFilter(label);
     }
     handleFilter();
     setSelected(!selected);
-    console.log("seasonQuery", seasonQuery);
-    console.log("selected", selected);
+    console.log('seasonQuery', seasonQuery);
+    console.log('selected', selected);
   };
 
   const selectedStyles = StyleSheet.create({
@@ -57,19 +59,19 @@ const styles = StyleSheet.create({
     paddingRight: 5,
   },
   containerToken: {
-    display: "flex",
+    display: 'flex',
     borderColor: colors.primary,
     borderWidth: 2,
     borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   textToken: {
     fontSize: 16,
     paddingHorizontal: 15,
     paddingVertical: 5,
-    fontWeight: "bold",
-    textAlign: "center",
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   textdark: {
     //   color: colors.light,

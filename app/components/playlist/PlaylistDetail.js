@@ -4,7 +4,7 @@ import React, {
   useState,
   useRef,
   useLayoutEffect,
-} from "react";
+} from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -13,33 +13,37 @@ import {
   Text,
   Button,
   TouchableOpacity,
-} from "react-native";
-import { StatusBar } from "expo-status-bar";
-import { filter } from "lodash";
+} from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { filter } from 'lodash';
 import {
   BottomSheetModal,
   BottomSheetFlatList,
   BottomSheetTextInput,
-} from "@gorhom/bottom-sheet";
-import DraggableFlatList from "react-native-draggable-flatlist";
-import { Ionicons } from "@expo/vector-icons";
+} from '@gorhom/bottom-sheet';
+import DraggableFlatList from 'react-native-draggable-flatlist';
+import { Ionicons } from '@expo/vector-icons';
 
-import { ThemeContext } from "../../util/ThemeManager";
-import Separator from "../list/Separator";
-import colors from "../../config/colors";
-import PlaylistListItem from "./PlaylistListItem";
-import songs_data from "../../data/songs_data";
-import SearchBar from "../SearchBar";
-import PlaylistListItemDragable from "./PlaylistListItemDragable";
+import { UserContext } from '../../util/UserManager';
+import Separator from '../list/Separator';
+import colors from '../../config/colors';
+import PlaylistListItem from './PlaylistListItem';
+import songs_data from '../../data/songs_data';
+import SearchBar from '../SearchBar';
+import PlaylistListItemDragable from './PlaylistListItemDragable';
+import { storeObjectData } from '../../util/LocalStorage';
 
 const PlaylistDetail = ({ navigation, route }) => {
-  const { theme } = React.useContext(ThemeContext);
+  const { theme, playlists } = React.useContext(UserContext);
   const bottomSheetModalRef = useRef(null);
   const AllSongs = songs_data;
   const [filteredSongs, setFilteredSongs] = useState(AllSongs);
   // song of the playlist
-  const [songs, setSongs] = useState(route.params.playlist.songs);
-  const [query, setQuery] = useState("");
+  const [songs, setSongs] = useState(
+    // route.params.playlist.songs.sort((a, b) => a?.number - b?.number)
+    route.params.playlist.songs
+  );
+  const [query, setQuery] = useState('');
 
   // search helper function
   const contains = ({ number }, input) => {
@@ -68,12 +72,23 @@ const PlaylistDetail = ({ navigation, route }) => {
   }, []);
 
   // variables for bottom sheet modal
-  const snapPoints = useMemo(() => ["25%", "50%", "90%"], []);
+  const snapPoints = useMemo(() => ['25%', '50%', '90%'], []);
 
   // handling bottom sheet
   const handleSheetChanges = useCallback((index) => {
-    console.log("handleSheetChanges", index);
+    // console.log('handleSheetChanges', index);
   }, []);
+
+  const updateSongs = async (data) => {
+    setSongs(data);
+    route.params.playlist.songs = data;
+    const playlist = route.params.playlist;
+    var index = playlists.findIndex((x) => x.title == playlist.title);
+    if (index === -1) {
+      playlists[index] = playlist;
+    }
+    await storeObjectData('playlists', playlists);
+  };
 
   const renderBottomSheetItem = useCallback(
     ({ item }) => (
@@ -91,7 +106,7 @@ const PlaylistDetail = ({ navigation, route }) => {
     <View style={styles.containerSh}>
       <View style={[styles.containerSearch, styles[`container${theme}`]]}>
         <Ionicons
-          name={"ios-search"}
+          name={'ios-search'}
           size={24}
           style={{ paddingRight: 5 }}
           color={colors.light_placeholder}
@@ -104,7 +119,7 @@ const PlaylistDetail = ({ navigation, route }) => {
           autoCapitalize="none"
           placeholder="vyhľadaj pieseň"
           placeholderTextColor={
-            theme === "light"
+            theme === 'light'
               ? colors.light_placeholder
               : colors.dark_placeholder
           }
@@ -117,7 +132,7 @@ const PlaylistDetail = ({ navigation, route }) => {
         style={{ flex: 1, marginHorizontal: 10 }}
         onPress={handleDismissModalPress}
       >
-        <Ionicons name={"close"} size={32} color={colors.light_placeholder} />
+        <Ionicons name={'close'} size={32} color={colors.light_placeholder} />
       </TouchableOpacity>
     </View>
   ));
@@ -130,7 +145,7 @@ const PlaylistDetail = ({ navigation, route }) => {
             <Ionicons
               name="md-add-circle"
               size={32}
-              color={theme === "dark" ? colors.primarydark : colors.primary}
+              color={theme === 'dark' ? colors.primarydark : colors.primary}
             />
           </View>
         </TouchableOpacity>
@@ -165,15 +180,15 @@ const PlaylistDetail = ({ navigation, route }) => {
       <DraggableFlatList
         data={songs}
         style={styles.containerList}
-        keyExtractor={(item) => item.number}
-        onDragEnd={() => setSongs(songs)}
+        keyExtractor={(item) => (item.number ? item.number : item.title)}
+        onDragEnd={({ data }) => updateSongs(data)}
         ItemSeparatorComponent={Separator}
         ListHeaderComponent={() => <Separator />}
         ListFooterComponent={() => <Separator />}
         renderItem={(item) => (
           <PlaylistListItemDragable
             item={item}
-            onPress={() => navigation.push("SongDetail", { song: item.item })}
+            onPress={() => navigation.push('SongDetail', { song: item.item })}
           />
         )}
       />
@@ -193,7 +208,7 @@ const PlaylistDetail = ({ navigation, route }) => {
         ListHeaderComponent={() => <Separator />}
         ListFooterComponent={() => <Separator />}
       /> */}
-      <StatusBar style={theme === "dark" ? "light" : "dark"} />
+      <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
     </SafeAreaView>
   );
 };
@@ -213,26 +228,26 @@ const styles = StyleSheet.create({
     elevation: 25,
   },
   shadowlight: {
-    shadowColor: "#000",
+    shadowColor: '#000',
   },
   shadowdark: {
-    shadowColor: "#ffffff",
+    shadowColor: '#ffffff',
   },
   containerSh: {
     flex: 1,
-    display: "flex",
-    alignItems: "center",
+    display: 'flex',
+    alignItems: 'center',
     marginBottom: 10,
-    flexDirection: "row",
-    justifyContent: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   containerSearch: {
     // width: "95 %",
     flex: 8,
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     padding: 10,
     marginLeft: 10,
     borderWidth: 0,
@@ -245,21 +260,21 @@ const styles = StyleSheet.create({
   rowItem: {
     height: 100,
     width: 100,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   contentContainer: {
-    backgroundColor: "white",
+    backgroundColor: 'white',
   },
   containerSearchBar: {
     flex: 1,
-    height: "100%",
+    height: '100%',
     paddingHorizontal: 10,
   },
   itemContainer: {
     paddingVertical: 10,
     flex: 1,
-    flexDirection: "row",
+    flexDirection: 'row',
     margin: 6,
     borderRadius: 15,
     borderWidth: 0,
@@ -270,7 +285,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
   },
   containerList: {
-    height: "100%",
+    height: '100%',
   },
   containerlight: {
     backgroundColor: colors.light,

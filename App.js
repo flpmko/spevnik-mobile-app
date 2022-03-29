@@ -1,18 +1,18 @@
-import React from "react";
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import React from 'react';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-import { ThemeProvider } from "./app/util/ThemeManager";
-import Navigation from "./app/util/Navigation";
+import { UserProvider } from './app/util/UserManager';
+import Navigation from './app/util/Navigation';
 
 const App = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <ThemeProvider>
+      <UserProvider>
         <BottomSheetModalProvider>
           <Navigation />
         </BottomSheetModalProvider>
-      </ThemeProvider>
+      </UserProvider>
     </GestureHandlerRootView>
   );
 };

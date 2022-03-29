@@ -1,4 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useState,
+  useCallback,
+} from 'react';
 import {
   StyleSheet,
   FlatList,
@@ -6,14 +11,17 @@ import {
   LogBox,
   View,
   Text,
+  TouchableOpacity,
 } from 'react-native';
+import Popover from 'react-native-popover-view/dist/Popover';
+import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { filter, _ } from 'lodash';
 import { doc, getDoc } from 'firebase/firestore';
 import NetInfo from '@react-native-community/netinfo';
 
 import { db } from '../../../firebase-config';
-import { ThemeContext } from '../../util/ThemeManager';
+import { UserContext } from '../../util/UserManager';
 import {
   getStoredData,
   getStoredObjectData,
@@ -38,29 +46,40 @@ const SongsList = ({ route, navigation }) => {
   };
 
   // const allSongs = props.route.params.data;
-  const { theme, favorites } = React.useContext(ThemeContext);
+  const { theme, favorites, setSeasons, seasons, activeFilter } =
+    React.useContext(UserContext);
+  const [showFilters, setShowFilters] = useState(route.params.filters);
   const [loading, setLoading] = useState(false);
-  const [allSongs, setAllSongs] = useState(
-    route.params.filters ? undefined : favorites
-  );
+  const [allSongs, setAllSongs] = useState(showFilters ? undefined : favorites);
   const [songs, setSongs] = useState(allSongs);
+  const [hymns, setHymns] = useState([]);
+  const [modern, setModern] = useState([]);
   const [seasonQuery, setSeasonQuery] = useState('');
   const [query, setQuery] = useState('');
+
   const hymnsRef = doc(db, 'index/hymns');
-  const filters = [
-    'Advent',
-    'Vianoce',
-    'Veľká noc',
-    'Pôst',
-    'Vstúpenie',
-    'Zoslanie',
-    'Trojjediný',
-    'Cirkev',
-  ];
+  const songsRef = doc(db, 'index/songs');
+
+  const [isPopoverVisible, setisPopoverVisible] = useState(false);
+
+  const togglePopover = () => {
+    setisPopoverVisible(!isPopoverVisible);
+  };
+
+  const handleLibraryChange = (library) => {
+    togglePopover();
+    if (library === 'songs') {
+      setSongs(allSongs);
+      setShowFilters(true);
+    } else {
+      setSongs(modern);
+      setShowFilters(false);
+    }
+  };
 
   // search helper function
   const contains = ({ number }, input) => {
-    if (number.toString().startsWith(input)) {
+    if (number?.toString().startsWith(input)) {
       return true;
     }
     return false;
@@ -84,11 +103,13 @@ const SongsList = ({ route, navigation }) => {
 
   // filter the list of hymns based on season
   const handleFilter = () => {
-    if (seasonQuery === '') {
+    // if (seasonQuery === '') {
+    if (activeFilter === '') {
       setSongs(allSongs);
     } else {
       const myData = [].concat(allSongs).filter(function (el) {
-        return el?.season == seasonQuery;
+        // return el?.season == seasonQuery;
+        return el?.season == activeFilter;
       });
       setSongs(myData);
     }
@@ -101,22 +122,25 @@ const SongsList = ({ route, navigation }) => {
   useEffect(() => {
     const setup = async () => {
       setLoading(true);
-      let locData;
-      if (route.params.filters) {
-        locData = await getStoredObjectData(
-          route.params.filters ? 'hymnsData' : 'favorites'
-        );
+      let locData, locDataMod;
+      if (showFilters) {
+        locData = await getStoredObjectData('hymnsData');
+        locDataMod = await getStoredObjectData('modern');
       } else {
         locData = favorites;
       }
       locData.sort((a, b) => a?.number - b?.number);
       setAllSongs(locData);
       setSongs(locData);
-      if (route.params.filters) {
+      setModern(locDataMod);
+      if (showFilters) {
         const netInfo = await NetInfo.fetch();
         if (netInfo.isInternetReachable) {
           const data = await getDoc(hymnsRef);
+          const songsDoc = await getDoc(songsRef);
           const lastChangeDb = data.get('lastChange').valueOf();
+          const seasonsData = data.get('seasons');
+          const songsData = songsDoc.get('all');
           const hymnsData = data
             .get('all')
             .sort((a, b) => a?.number - b?.number);
@@ -125,9 +149,22 @@ const SongsList = ({ route, navigation }) => {
             if (lastChangeLocal !== lastChangeDb) {
               await storeData('lastChange', lastChangeDb);
               await storeObjectData('hymnsData', hymnsData);
+              await storeObjectData('seasons', seasonsData);
+              await storeObjectData('modern', songsData);
               setAllSongs(hymnsData);
+              setSeasons(seasonsData);
               setSongs(hymnsData);
+              setModern(songsData);
             }
+          }
+          if (!modern) {
+            console.log('nejsu');
+            await storeObjectData('modern', songsData);
+            setModern(songsData);
+          }
+          if (!seasons) {
+            await storeObjectData('seasons', seasonsData);
+            setSeasons(seasonsData);
           }
         }
       }
@@ -137,23 +174,75 @@ const SongsList = ({ route, navigation }) => {
   }, []);
 
   useEffect(() => {
-    setSongs(route.params.filters ? songs : favorites);
+    setSongs(showFilters ? songs : favorites);
   }, [favorites]);
+
+  useLayoutEffect(() => {
+    if (showFilters) {
+      navigation.setOptions({
+        headerRight: () => (
+          <Popover
+            isVisible={isPopoverVisible}
+            onRequestClose={togglePopover}
+            popoverStyle={styles.popoverStyle}
+            arrowStyle={styles.arrowStyle}
+            from={
+              <TouchableOpacity onPress={togglePopover}>
+                <Ionicons
+                  name={'book'}
+                  size={28}
+                  color={theme === 'dark' ? colors.primarydark : colors.primary}
+                />
+              </TouchableOpacity>
+            }
+          >
+            <View>
+              <TouchableOpacity
+                style={styles.containerPopup}
+                onPress={() => handleLibraryChange('songs')}
+              >
+                <Ionicons
+                  name={'file-tray-full'}
+                  size={28}
+                  style={styles.iconPopup}
+                  color={theme === 'dark' ? colors.primarydark : colors.primary}
+                />
+                <Text style={styles.textPopup}>Spevníkové</Text>
+              </TouchableOpacity>
+              <Separator />
+              <TouchableOpacity
+                style={styles.containerPopup}
+                onPress={() => handleLibraryChange('modern')}
+              >
+                <Ionicons
+                  name={'file-tray-full'}
+                  size={28}
+                  style={styles.iconPopup}
+                  color={theme === 'dark' ? colors.primarydark : colors.primary}
+                />
+                <Text style={styles.textPopup}>Mládežnícke</Text>
+              </TouchableOpacity>
+            </View>
+          </Popover>
+        ),
+      });
+    }
+  });
 
   return (
     <SafeAreaView style={[styles.container, styles[`container${theme}`]]}>
       {!loading ? (
         <FlatList
           data={songs}
-          keyExtractor={(item) => item?.number}
+          keyExtractor={(item) => (item.number ? item.number : item.title)}
           renderItem={({ item }) => {
             return <ListItem item={item} onPress={() => goToSong(item)} />;
           }}
           ItemSeparatorComponent={Separator}
           ListHeaderComponent={
-            route.params.filters ? (
+            showFilters ? (
               <SearchFilterBar
-                filters={filters}
+                filters={seasons}
                 handleFilter={handleFilter}
                 query={query}
                 handleSearch={handleSearch}
@@ -193,6 +282,32 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 10,
+  },
+  containerAddButton: {
+    width: 'auto',
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  containerPopup: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    paddingVertical: 10,
+  },
+  iconPopup: {
+    paddingHorizontal: 10,
+  },
+  textPopup: {
+    paddingRight: 10,
+  },
+  popoverStyle: {
+    backgroundColor: colors.light,
+    opacity: 1,
+    borderRadius: 15,
+  },
+  arrowStyle: {
+    backgroundColor: colors.light,
   },
   textInput: {
     backgroundColor: colors.lightgray,

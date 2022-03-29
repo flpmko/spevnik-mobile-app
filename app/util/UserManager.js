@@ -3,14 +3,16 @@ import { Appearance } from 'react-native';
 
 import { getStoredObjectData, removeData } from './LocalStorage';
 
-export const ThemeContext = React.createContext();
+export const UserContext = React.createContext();
 
-export const ThemeProvider = ({ children }) => {
+export const UserProvider = ({ children }) => {
   const colorScheme = Appearance.getColorScheme();
   const [theme, setTheme] = useState(colorScheme);
   const [fontSize, setFontSize] = useState(20);
   const [favorites, setFavorites] = useState([]);
   const [playlists, setPlaylists] = useState([]);
+  const [seasons, setSeasons] = useState([]);
+  const [activeFilter, setActiveFilter] = useState('');
 
   const resetFontSize = () => {
     setFontSize(20);
@@ -22,6 +24,11 @@ export const ThemeProvider = ({ children }) => {
     } else {
       setTheme('light');
     }
+  };
+
+  const initSeasons = async () => {
+    const seaons = await getStoredObjectData('seasons');
+    setSeasons(seaons);
   };
 
   const initFavs = async () => {
@@ -40,32 +47,37 @@ export const ThemeProvider = ({ children }) => {
   };
 
   const resetPlays = async () => {
-    const favs = await removeData('playlists');
+    const plays = await removeData('playlists');
     setPlaylists([]);
   };
 
   useEffect(() => {
     initFavs();
     initPlays();
+    initSeasons();
   }, []);
 
   return (
-    <ThemeContext.Provider
+    <UserContext.Provider
       value={{
         theme,
         fontSize,
         favorites,
         playlists,
+        seasons,
+        activeFilter,
         toggleTheme,
         resetFontSize,
         setFontSize,
         setFavorites,
         setPlaylists,
+        setSeasons,
+        setActiveFilter,
         resetFavs,
         resetPlays,
       }}
     >
       {children}
-    </ThemeContext.Provider>
+    </UserContext.Provider>
   );
 };

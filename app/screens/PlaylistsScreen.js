@@ -9,7 +9,7 @@ import {
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 
-import { ThemeContext } from '../util/ThemeManager';
+import { UserContext } from '../util/UserManager';
 import PlaylistList from '../components/playlist/PlaylistList';
 import PlaylistDetail from '../components/playlist/PlaylistDetail';
 import SongDetail from '../components/song/SongDetail';
@@ -20,7 +20,7 @@ import colors from '../config/colors';
 import { storeObjectData } from '../util/LocalStorage';
 
 const PlaylistsScreen = () => {
-  const { theme, playlists, setPlaylists } = React.useContext(ThemeContext);
+  const { theme, playlists, setPlaylists } = React.useContext(UserContext);
   const Stack = createNativeStackNavigator();
   const [heartIcon, setHeartIcon] = useState('heart-outline');
   const [visible, setVisible] = useState(false);

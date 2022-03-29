@@ -2,14 +2,14 @@ import React from 'react';
 import { StyleSheet, SafeAreaView, FlatList, Alert } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
-import { ThemeContext } from '../../util/ThemeManager';
+import { UserContext } from '../../util/UserManager';
 import PlaylistItem from './PlaylistItem';
 import colors from '../../config/colors';
 import { storeObjectData } from '../../util/LocalStorage';
 
 const PlaylistList = (props) => {
-  const { theme, playlists, setPlaylists } = React.useContext(ThemeContext);
-  const Playlists = playlists; //props.route.params.playlists;
+  const { theme, playlists, setPlaylists } = React.useContext(UserContext);
+  // const Playlists = playlists; //props.route.params.playlists;
 
   const onDeleteItem = (item) =>
     Alert.alert('Vymazať', 'Naozaj chcete tento playlist vymazať?', [
@@ -36,7 +36,7 @@ const PlaylistList = (props) => {
   return (
     <SafeAreaView style={[styles.container, styles[`container${theme}`]]}>
       <FlatList
-        data={Playlists}
+        data={playlists}
         contentOffset={{ x: 0, y: -10 }}
         keyExtractor={(item) => item.number.toString()}
         numColumns={2}

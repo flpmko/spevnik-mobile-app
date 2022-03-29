@@ -1,14 +1,18 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
+import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Popover from 'react-native-popover-view/dist/Popover';
+import { Ionicons } from '@expo/vector-icons';
 
-import { ThemeContext } from '../../util/ThemeManager';
+import { UserContext } from '../../util/UserManager';
 import SongDetail from './SongDetail';
 import SongsList from './SongsList';
+import Separator from '../list/Separator';
 
 import colors from '../../config/colors';
 
 const SongsPage = ({ screenTitle, data, filters }) => {
-  const { theme } = React.useContext(ThemeContext);
+  const { theme } = React.useContext(UserContext);
   const Stack = createNativeStackNavigator();
 
   return (
@@ -30,7 +34,9 @@ const SongsPage = ({ screenTitle, data, filters }) => {
         component={SongDetail}
         options={({ route }) => {
           return {
-            headerTitle: 'Pieseň č. ' + route.params.song?.number,
+            headerTitle: route.params.song.number
+              ? 'Pieseň č. ' + route.params.song.number
+              : route.params.song.title,
             headerTintColor:
               theme === 'dark' ? colors.primarydark : colors.primary,
           };

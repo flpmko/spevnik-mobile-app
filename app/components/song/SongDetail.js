@@ -19,7 +19,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Popover from 'react-native-popover-view/dist/Popover';
 import * as Linking from 'expo-linking';
 
-import { ThemeContext } from '../../util/ThemeManager';
+import { UserContext } from '../../util/UserManager';
 import {
   getStoredData,
   getStoredObjectData,
@@ -32,7 +32,7 @@ import Separator from '../list/Separator';
 
 const SongDetail = ({ route, navigation }) => {
   const { theme, fontSize, favorites, setFavorites, playlists } =
-    React.useContext(ThemeContext);
+    React.useContext(UserContext);
   const Playlists = playlists;
   const [isPopoverVisible, setisPopoverVisible] = useState(false);
   const [heartIcon, setHeartIcon] = useState('heart-outline');
@@ -42,7 +42,7 @@ const SongDetail = ({ route, navigation }) => {
   const snapPoints = useMemo(() => ['25%', '50%', '90%'], []);
 
   const handleSheetChanges = useCallback((index) => {
-    console.log('handleSheetChanges', index);
+    // console.log('handleSheetChanges', index);
   }, []);
 
   const renderItem = useCallback(
@@ -63,10 +63,10 @@ const SongDetail = ({ route, navigation }) => {
     if (index === -1) {
       playlist.songs.push(song);
       storeObjectData('playlists', playlists);
+      handleDismissModalPress();
     } else {
       alert('Pieseň už v tomto playliste je');
     }
-    handleDismissModalPress();
   };
 
   const textStyles = StyleSheet.create({
@@ -235,11 +235,29 @@ const SongDetail = ({ route, navigation }) => {
         <View style={styles.containerTitle}>
           <Text style={[styles.textTitle]}>{route.params.song?.title}</Text>
         </View>
-        <View style={styles.containerCategory}>
-          <Text style={[styles.textCategory, styles[`text${theme}`]]}>
-            {route.params.song?.season}
-          </Text>
-        </View>
+        {route.params.song.season ? (
+          <View style={styles.containerCategory}>
+            <Text style={[styles.textCategory, styles[`text${theme}`]]}>
+              {route.params.song.season}
+            </Text>
+          </View>
+        ) : (
+          <View style={styles.containerChords}>
+            {route.params.song.chords.map((e, i) => (
+              <View
+                key={i}
+                style={[
+                  styles.containerChordItem,
+                  styles[`containerChordItem${theme}`],
+                ]}
+              >
+                <Text style={[styles.textChord, styles[`textChord${theme}`]]}>
+                  {e}
+                </Text>
+              </View>
+            ))}
+          </View>
+        )}
         <View style={styles.containerText}>
           {route.params.song?.verses?.map(function (item, i) {
             return (
@@ -272,6 +290,27 @@ const styles = StyleSheet.create({
     display: 'flex',
     padding: 20,
     height: '100%',
+  },
+  containerChordItem: {
+    height: 50,
+    width: 50,
+    borderRadius: 15,
+    borderColor: 'transparent',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 5,
+  },
+  containerChordItemlight: {
+    backgroundColor: colors.lightgray,
+  },
+  containerChordItemdark: {
+    backgroundColor: colors.darkgray,
+  },
+  containerChords: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    paddingTop: 10,
   },
   containerAddButton: {
     width: 'auto',
@@ -318,6 +357,16 @@ const styles = StyleSheet.create({
   },
   iconPopup: {
     paddingHorizontal: 10,
+  },
+  textChord: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  textChordlight: {
+    color: colors.darkgray,
+  },
+  textChorddark: {
+    color: colors.lightgray,
   },
   textPopup: {
     paddingRight: 10,
