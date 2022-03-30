@@ -52,7 +52,7 @@ const SongsList = ({ route, navigation }) => {
   const [showFilters, setShowFilters] = useState(route.params.filters);
   const [loading, setLoading] = useState(false);
   const [allSongs, setAllSongs] = useState(
-    showFilters ? songs_data : favorites
+    route.params.filters ? songs_data : favorites
   );
   const [songs, setSongs] = useState(allSongs);
   const [hymns, setHymns] = useState([]);
@@ -177,7 +177,7 @@ const SongsList = ({ route, navigation }) => {
   }, [favorites]);
 
   useLayoutEffect(() => {
-    if (showFilters) {
+    if (route.params.filters) {
       navigation.setOptions({
         headerRight: () => (
           <Popover

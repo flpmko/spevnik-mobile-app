@@ -231,34 +231,40 @@ const SongDetail = ({ route, navigation }) => {
           />
         </BottomSheetModal>
       </View>
-      <ScrollView style={[styles.container, styles[`container${theme}`]]}>
-        <View style={styles.containerTitle}>
-          <Text style={[styles.textTitle]}>{route.params.song?.title}</Text>
+      <ScrollView style={[{ height: '100%' }, styles[`container${theme}`]]}>
+        <View style={styles.containerHeader}>
+          <View style={styles.containerTitle}>
+            <Text style={[styles.textTitle]}>{route.params.song?.title}</Text>
+          </View>
+          {route.params.song.season ? (
+            <View style={styles.containerCategory}>
+              <Text style={[styles.textCategory, styles[`text${theme}`]]}>
+                {route.params.song.season}
+              </Text>
+            </View>
+          ) : (
+            <ScrollView
+              contentContainerStyle={styles.containerChords}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+            >
+              {route.params.song.chords.map((e, i) => (
+                <View
+                  key={i}
+                  style={[
+                    styles.containerChordItem,
+                    styles[`containerChordItem${theme}`],
+                  ]}
+                >
+                  <Text style={[styles.textChord, styles[`textChord${theme}`]]}>
+                    {e}
+                  </Text>
+                </View>
+              ))}
+            </ScrollView>
+          )}
         </View>
-        {route.params.song.season ? (
-          <View style={styles.containerCategory}>
-            <Text style={[styles.textCategory, styles[`text${theme}`]]}>
-              {route.params.song.season}
-            </Text>
-          </View>
-        ) : (
-          <View style={styles.containerChords}>
-            {route.params.song.chords.map((e, i) => (
-              <View
-                key={i}
-                style={[
-                  styles.containerChordItem,
-                  styles[`containerChordItem${theme}`],
-                ]}
-              >
-                <Text style={[styles.textChord, styles[`textChord${theme}`]]}>
-                  {e}
-                </Text>
-              </View>
-            ))}
-          </View>
-        )}
-        <View style={styles.containerText}>
+        <View style={[styles.containerText, styles.container]}>
           {route.params.song?.verses?.map(function (item, i) {
             return (
               <View style={styles.containerVerse} key={i}>
@@ -292,13 +298,15 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   containerChordItem: {
-    height: 50,
-    width: 50,
+    minHeight: 50,
+    minWidth: 50,
     borderRadius: 15,
     borderColor: 'transparent',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 5,
+    display: 'flex',
+    paddingHorizontal: 10,
   },
   containerChordItemlight: {
     backgroundColor: colors.lightgray,
@@ -344,6 +352,11 @@ const styles = StyleSheet.create({
   },
   containerTitle: {
     display: 'flex',
+  },
+  containerHeader: {
+    display: 'flex',
+    paddingTop: 20,
+    paddingLeft: 20,
   },
   containerCategory: {
     display: 'flex',

@@ -8,11 +8,12 @@ import React, {
 import {
   StyleSheet,
   SafeAreaView,
-  FlatList,
   View,
   Text,
-  Button,
   TouchableOpacity,
+  Platform,
+  UIManager,
+  TouchableHighlight
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { filter } from 'lodash';
@@ -21,8 +22,15 @@ import {
   BottomSheetFlatList,
   BottomSheetTextInput,
 } from '@gorhom/bottom-sheet';
-import DraggableFlatList from 'react-native-draggable-flatlist';
+import DraggableFlatList, {
+  RenderItemParams,
+  ScaleDecorator,
+} from 'react-native-draggable-flatlist';
 import { Ionicons } from '@expo/vector-icons';
+import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import SwipeableItem, {
+  useSwipeableItemParams,
+} from "react-native-swipeable-item";
 
 import { UserContext } from '../../util/UserManager';
 import Separator from '../list/Separator';
@@ -33,16 +41,32 @@ import SearchBar from '../SearchBar';
 import PlaylistListItemDragable from './PlaylistListItemDragable';
 import { storeObjectData } from '../../util/LocalStorage';
 
+type Item = {
+  number: number;
+  title: string;
+  category: string;
+  season: string;
+  text: string;
+};
+
+const { multiply, sub } = Animated;
+
+if (Platform.OS === "android") {
+  UIManager.setLayoutAnimationEnabledExperimental &&
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+const OVERSWIPE_DIST = 10;
+
 const PlaylistDetail = ({ navigation, route }) => {
   const { theme, playlists } = React.useContext(UserContext);
-  const bottomSheetModalRef = useRef(null);
   const AllSongs = songs_data;
+  const itemRefs = useRef(new Map());
+
+  const bottomSheetModalRef = useRef(null);
   const [filteredSongs, setFilteredSongs] = useState(AllSongs);
+
   // song of the playlist
-  const [songs, setSongs] = useState(
-    // route.params.playlist.songs.sort((a, b) => a?.number - b?.number)
-    route.params.playlist.songs
-  );
+  const [songs, setSongs] = useState(route.params.playlist.songs);
   const [query, setQuery] = useState('');
 
   // search helper function
@@ -90,6 +114,14 @@ const PlaylistDetail = ({ navigation, route }) => {
     await storeObjectData('playlists', playlists);
   };
 
+  const goToSong = (song) => {
+    navigation.push('SongDetail', { song: song })
+  }
+
+  const renderItem = useCallback((params: RenderItemParams<Item>) => {
+    return <RowItem {...params} itemRefs={itemRefs} />
+  }, []);
+
   const renderBottomSheetItem = useCallback(
     ({ item }) => (
       <TouchableOpacity style={styles.itemContainer}>
@@ -135,13 +167,13 @@ const PlaylistDetail = ({ navigation, route }) => {
         <Ionicons name={'close'} size={32} color={colors.light_placeholder} />
       </TouchableOpacity>
     </View>
-  ));
+  ), []);
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity onPress={handlePresentModalPress}>
-          <View style={styles.addButtonContainer}>
+          <View>
             <Ionicons
               name="md-add-circle"
               size={32}
@@ -180,36 +212,93 @@ const PlaylistDetail = ({ navigation, route }) => {
       <DraggableFlatList
         data={songs}
         style={styles.containerList}
-        keyExtractor={(item) => (item.number ? item.number : item.title)}
+        keyExtractor={(item: Item) => (item.title)}
         onDragEnd={({ data }) => updateSongs(data)}
+        activationDistance={10}
         ItemSeparatorComponent={Separator}
         ListHeaderComponent={() => <Separator />}
         ListFooterComponent={() => <Separator />}
-        renderItem={(item) => (
-          <PlaylistListItemDragable
-            item={item}
-            onPress={() => navigation.push('SongDetail', { song: item.item })}
-          />
-        )}
+        renderItem={renderItem}
       />
-      {/* <FlatList
-        style={styles.containerList}
-        data={songs}
-        keyExtractor={(item) => item.number}
-        renderItem={({ item }) => {
-          return (
-            <PlaylistListItem
-              item={item}
-              onPress={() => navigation.push("SongDetail", { song: item })}
-            />
-          );
-        }}
-        ItemSeparatorComponent={Separator}
-        ListHeaderComponent={() => <Separator />}
-        ListFooterComponent={() => <Separator />}
-      /> */}
       <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
     </SafeAreaView>
+  );
+};
+
+type RowItemProps = {
+  item: Item;
+  drag: () => void;
+  itemRefs: React.MutableRefObject<Map<any, any>>;
+};
+
+function RowItem({ item, itemRefs, drag }: RowItemProps) {
+  const { theme } = React.useContext(UserContext);
+  return (
+    <ScaleDecorator>
+      <SwipeableItem
+        key={item.title}
+        item={item}
+        ref={(ref) => {
+          if (ref && !itemRefs.current.get(item.title)) {
+            itemRefs.current.set(item.title, ref);
+          }
+        }}
+        onChange={({ open }) => {
+          if (open) {
+            // Close all other open items
+            [...itemRefs.current.entries()].forEach(([key, ref]) => {
+              if (key !== item.title && ref) ref.close();
+            });
+          }
+        }}
+        overSwipe={OVERSWIPE_DIST}
+        renderUnderlayLeft={() => <UnderlayLeft />}
+        snapPointsLeft={[100]}
+      >
+        <View >
+          <TouchableOpacity onLongPress={drag} style={[styles.listItem,styles[`background${theme}`]]}>
+          <View style={styles.containerLeftIcon}>
+            <Ionicons
+              name={"menu"}
+              color={theme === "light" ? "black" : "white"}
+            />
+          </View>
+          <View style={styles.containerNumber}>
+            <Text style={[styles.listItemNumber, styles[`text${theme}`]]}>
+              {item.number}
+            </Text>
+          </View>
+          <View style={styles.containerName}>
+            <Text
+              style={[styles.listItemName, styles[`text${theme}`]]}
+              numberOfLines={1}
+            >
+              {item.title}
+            </Text>
+          </View>
+          <View style={styles.containerIcon}>
+            <Ionicons
+              name={"chevron-forward"}
+              color={theme === "light" ? "black" : "white"}
+            />
+          </View>
+          </TouchableOpacity>
+        </View>
+      </SwipeableItem>
+    </ScaleDecorator>
+  );
+}
+
+// item on the RIGHT side
+const UnderlayLeft = () => {
+  const { close, item } = useSwipeableItemParams<Item>();
+
+  return (
+    <Animated.View style={[styles.row, styles.underlayLeft]}>
+      <TouchableOpacity onPressOut={close}>
+        <Text style={styles.text}>Odstrániť</Text>
+      </TouchableOpacity>
+    </Animated.View>
   );
 };
 
@@ -293,6 +382,70 @@ const styles = StyleSheet.create({
   containerdark: {
     backgroundColor: colors.dark,
   },
+  row: {
+    flexDirection: "row",
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "flex-end",
+    padding: 15,
+  },
+  text: {
+    fontWeight: "bold",
+    color: "white",
+  },
+  underlayRight: {
+    flex: 1,
+    backgroundColor: "teal",
+    justifyContent: "flex-start",
+  },
+  underlayLeft: {
+    flex: 1,
+    backgroundColor: "tomato",
+    justifyContent: "flex-end",
+  },
+  containerLeftIcon: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  containerIcon: {
+    flex: 1,
+    alignItems: "flex-end",
+    justifyContent: "center",
+  },
+  containerName: {
+    flex: 6,
+    justifyContent: "center",
+  },
+  containerNumber: {
+    flex: 1,
+    paddingHorizontal: 3,
+  },
+  listItem: {
+    flex: 1,
+    paddingVertical: 10,
+    paddingRight: 10,
+    flexDirection: "row",
+  },
+  listItemNumber: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  listItemName: {
+    fontSize: 18,
+  },
+  textdark: {
+    color: colors.light,
+  },
+  textlight: {
+    color: colors.black,
+  },
+  backgroundlight: {
+    backgroundColor: colors.light
+  },
+  backgrounddark: {
+    backgroundColor: colors.dark
+  }
 });
 
 export default PlaylistDetail;

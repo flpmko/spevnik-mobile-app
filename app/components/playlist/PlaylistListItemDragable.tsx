@@ -1,7 +1,12 @@
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, Platform,
+  UIManager, } from "react-native";
 import { RenderItemParams, ScaleDecorator } from "react-native-draggable-flatlist";
+import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import SwipeableItem, {
+  useSwipeableItemParams,
+} from "react-native-swipeable-item";
 
 import { UserContext } from "../../util/UserManager";
 import colors from "../../config/colors";
@@ -13,6 +18,15 @@ type Item = {
   season: string;
   text: string;
 };
+
+if (Platform.OS === "android") {
+  UIManager.setLayoutAnimationEnabledExperimental &&
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
+const { multiply, sub } = Animated;
+const OVERSWIPE_DIST = 20;
+const NUM_ITEMS = 20;
 
 const PlaylistListItemDragable = (props, { item, drag, isActive }: RenderItemParams<Item>) => {
   const { theme } = React.useContext(UserContext);
@@ -57,7 +71,109 @@ const PlaylistListItemDragable = (props, { item, drag, isActive }: RenderItemPar
 
 export default PlaylistListItemDragable;
 
+type RowItemProps = {
+  item: Item;
+  drag: () => void;
+  itemRefs: React.MutableRefObject<Map<any, any>>;
+};
+
+function RowItem({ item, itemRefs, drag }: RowItemProps) {
+  return (
+    <ScaleDecorator>
+      <SwipeableItem
+        key={item.title}
+        item={item}
+        ref={(ref) => {
+          if (ref && !itemRefs.current.get(item.title)) {
+            itemRefs.current.set(item.title, ref);
+          }
+        }}
+        onChange={({ open }) => {
+          if (open) {
+            // Close all other open items
+            [...itemRefs.current.entries()].forEach(([key, ref]) => {
+              if (key !== item.title && ref) ref.close();
+            });
+          }
+        }}
+        overSwipe={OVERSWIPE_DIST}
+        renderUnderlayLeft={() => <UnderlayLeft drag={drag} />}
+        renderUnderlayRight={() => <UnderlayRight />}
+        snapPointsLeft={[50, 150, 175]}
+        snapPointsRight={[175]}
+      >
+        <View
+          style={[
+            styles.row,
+            { backgroundColor: colors.light, height: 40 },
+          ]}
+        >
+          <TouchableOpacity onPressIn={drag}>
+            <Text style={styles.text}>{item.text}</Text>
+          </TouchableOpacity>
+        </View>
+      </SwipeableItem>
+    </ScaleDecorator>
+  );
+}
+
+const UnderlayLeft = ({ drag }: { drag: () => void }) => {
+  const { item, percentOpen } = useSwipeableItemParams<Item>();
+  const animStyle = useAnimatedStyle(
+    () => ({
+      opacity: percentOpen.value,
+    }),
+    [percentOpen]
+  );
+
+  return (
+    <Animated.View
+      style={[styles.row, styles.underlayLeft, animStyle]} // Fade in on open
+    >
+      <TouchableOpacity onPressIn={drag}>
+        <Text style={styles.text}>{`[drag]`}</Text>
+      </TouchableOpacity>
+    </Animated.View>
+  );
+};
+
+function UnderlayRight() {
+  const { close } = useSwipeableItemParams<Item>();
+  return (
+    <Animated.View style={[styles.row, styles.underlayRight]}>
+      <TouchableOpacity onPressOut={close}>
+        <Text style={styles.text}>CLOSE</Text>
+      </TouchableOpacity>
+    </Animated.View>
+  );
+}
+
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  row: {
+    flexDirection: "row",
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 15,
+  },
+  text: {
+    fontWeight: "bold",
+    color: "white",
+    fontSize: 32,
+  },
+  underlayRight: {
+    flex: 1,
+    backgroundColor: "teal",
+    justifyContent: "flex-start",
+  },
+  underlayLeft: {
+    flex: 1,
+    backgroundColor: "tomato",
+    justifyContent: "flex-end",
+  },
   containerLeftIcon: {
     flex: 1,
     alignItems: "center",
@@ -97,10 +213,8 @@ const styles = StyleSheet.create({
   },
   backgroundlight: {
     backgroundColor: colors.light
-    
   },
   backgrounddark: {
     backgroundColor: colors.dark
-
   }
 });
