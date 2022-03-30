@@ -201,7 +201,7 @@ const SongsList = ({ route, navigation }) => {
                 onPress={() => handleLibraryChange('songs')}
               >
                 <Ionicons
-                  name={'file-tray-full'}
+                  name={showFilters ? 'checkmark' : 'file-tray-full'}
                   size={28}
                   style={styles.iconPopup}
                   color={theme === 'dark' ? colors.primarydark : colors.primary}
@@ -214,7 +214,7 @@ const SongsList = ({ route, navigation }) => {
                 onPress={() => handleLibraryChange('modern')}
               >
                 <Ionicons
-                  name={'file-tray-full'}
+                  name={showFilters ? 'file-tray-full' : 'checkmark'}
                   size={28}
                   style={styles.iconPopup}
                   color={theme === 'dark' ? colors.primarydark : colors.primary}
