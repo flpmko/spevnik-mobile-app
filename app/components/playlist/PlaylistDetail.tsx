@@ -31,6 +31,7 @@ import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import SwipeableItem, {
   useSwipeableItemParams,
 } from "react-native-swipeable-item";
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { UserContext } from '../../util/UserManager';
 import Separator from '../list/Separator';
@@ -40,6 +41,7 @@ import songs_data from '../../data/songs_data';
 import SearchBar from '../SearchBar';
 import PlaylistListItemDragable from './PlaylistListItemDragable';
 import { storeObjectData } from '../../util/LocalStorage';
+import { useNavigation } from '@react-navigation/native';
 
 type Item = {
   number: number;
@@ -119,7 +121,7 @@ const PlaylistDetail = ({ navigation, route }) => {
   }
 
   const renderItem = useCallback((params: RenderItemParams<Item>) => {
-    return <RowItem {...params} itemRefs={itemRefs} />
+    return <RowItem {...params} itemRefs={itemRefs}/>
   }, []);
 
   const renderBottomSheetItem = useCallback(
@@ -233,6 +235,13 @@ type RowItemProps = {
 
 function RowItem({ item, itemRefs, drag }: RowItemProps) {
   const { theme } = React.useContext(UserContext);
+  type StackParamList = {
+    SongDetail: { song: Item }
+}
+
+type NavigationProps = NativeStackNavigationProp<StackParamList>;
+  const navigation = useNavigation<NavigationProps>();
+
   return (
     <ScaleDecorator>
       <SwipeableItem
@@ -256,7 +265,7 @@ function RowItem({ item, itemRefs, drag }: RowItemProps) {
         snapPointsLeft={[100]}
       >
         <View >
-          <TouchableOpacity onLongPress={drag} style={[styles.listItem,styles[`background${theme}`]]}>
+          <TouchableOpacity onLongPress={drag} onPress={() => navigation.navigate("SongDetail", {song: item})} style={[styles.listItem,styles[`background${theme}`]]}>
           <View style={styles.containerLeftIcon}>
             <Ionicons
               name={"menu"}
