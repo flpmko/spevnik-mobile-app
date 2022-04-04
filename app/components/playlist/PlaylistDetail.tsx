@@ -13,7 +13,6 @@ import {
   TouchableOpacity,
   Platform,
   UIManager,
-  TouchableHighlight
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { filter } from 'lodash';
@@ -27,7 +26,7 @@ import DraggableFlatList, {
   ScaleDecorator,
 } from 'react-native-draggable-flatlist';
 import { Ionicons } from '@expo/vector-icons';
-import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 import SwipeableItem, {
   useSwipeableItemParams,
 } from "react-native-swipeable-item";
@@ -36,10 +35,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { UserContext } from '../../util/UserManager';
 import Separator from '../list/Separator';
 import colors from '../../config/colors';
-import PlaylistListItem from './PlaylistListItem';
 import songs_data from '../../data/songs_data';
-import SearchBar from '../SearchBar';
-import PlaylistListItemDragable from './PlaylistListItemDragable';
 import { storeObjectData } from '../../util/LocalStorage';
 import { useNavigation } from '@react-navigation/native';
 
@@ -100,28 +96,19 @@ const PlaylistDetail = ({ navigation, route }) => {
   // variables for bottom sheet modal
   const snapPoints = useMemo(() => ['25%', '50%', '90%'], []);
 
-  // handling bottom sheet
-  const handleSheetChanges = useCallback((index) => {
-    // console.log('handleSheetChanges', index);
-  }, []);
-
   const updateSongs = async (data) => {
     setSongs(data);
     route.params.playlist.songs = data;
     const playlist = route.params.playlist;
     var index = playlists.findIndex((x) => x.title == playlist.title);
-    if (index === -1) {
+    if (index !== -1) {
       playlists[index] = playlist;
     }
     await storeObjectData('playlists', playlists);
   };
 
-  const goToSong = (song) => {
-    navigation.push('SongDetail', { song: song })
-  }
-
   const renderItem = useCallback((params: RenderItemParams<Item>) => {
-    return <RowItem {...params} itemRefs={itemRefs}/>
+    return <RowItem {...params} playlist={route.params.playlist.title} itemRefs={itemRefs}/>
   }, []);
 
   const renderBottomSheetItem = useCallback(
@@ -194,7 +181,6 @@ const PlaylistDetail = ({ navigation, route }) => {
           ref={bottomSheetModalRef}
           index={1}
           snapPoints={snapPoints}
-          onChange={handleSheetChanges}
           keyboardBehavior="extend"
           style={[
             styles.shadow,
@@ -229,11 +215,12 @@ const PlaylistDetail = ({ navigation, route }) => {
 
 type RowItemProps = {
   item: Item;
+  playlist: string;
   drag: () => void;
   itemRefs: React.MutableRefObject<Map<any, any>>;
 };
 
-function RowItem({ item, itemRefs, drag }: RowItemProps) {
+function RowItem({ item, playlist, itemRefs, drag }: RowItemProps) {
   const { theme } = React.useContext(UserContext);
   type StackParamList = {
     SongDetail: { song: Item }
@@ -261,7 +248,7 @@ type NavigationProps = NativeStackNavigationProp<StackParamList>;
           }
         }}
         overSwipe={OVERSWIPE_DIST}
-        renderUnderlayLeft={() => <UnderlayLeft />}
+        renderUnderlayLeft={() => <UnderlayLeft playlist={playlist}/>}
         snapPointsLeft={[100]}
       >
         <View >
@@ -298,13 +285,30 @@ type NavigationProps = NativeStackNavigationProp<StackParamList>;
   );
 }
 
+type UnderlayLeftProps = {
+  playlist: string;
+}
+
 // item on the RIGHT side
-const UnderlayLeft = () => {
+const UnderlayLeft = ({playlist}:UnderlayLeftProps) => {
   const { close, item } = useSwipeableItemParams<Item>();
+  const { playlists } = React.useContext(UserContext);
+
+  const removeSong = async () => {
+    var indexP = playlists.findIndex((x) => x.title == playlist);
+    if (indexP !== -1) {
+      var indexS = playlists[indexP].songs.findIndex((x) => x.title == item.title);
+      if (indexS !== -1) {
+        playlists[indexP].songs.splice(indexS, 1);
+        await storeObjectData('playlists', playlists);
+      }
+    }
+    close()
+  };
 
   return (
     <Animated.View style={[styles.row, styles.underlayLeft]}>
-      <TouchableOpacity onPressOut={close}>
+      <TouchableOpacity onPressOut={removeSong}>
         <Text style={styles.text}>Odstrániť</Text>
       </TouchableOpacity>
     </Animated.View>

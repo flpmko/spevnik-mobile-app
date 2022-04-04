@@ -1,9 +1,4 @@
-import React, {
-  useEffect,
-  useLayoutEffect,
-  useState,
-  useCallback,
-} from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import {
   StyleSheet,
   FlatList,
@@ -133,7 +128,6 @@ const SongsList = ({ route, navigation }) => {
       if (locDataMod) setModern(locDataMod);
       if (showFilters) {
         const netInfo = await NetInfo.fetch();
-        console.log(netInfo);
         if (netInfo.isInternetReachable) {
           const data = await getDoc(hymnsRef);
           const songsDoc = await getDoc(songsRef);
