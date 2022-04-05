@@ -17,7 +17,14 @@ const ListItem = ({ item, onPress }) => {
             </Text>
           </View>
         ) : (
-          <View style={styles.containerFill}></View>
+          // <View style={styles.containerFill}></View>
+          <View style={styles.containerNumber}>
+            <Ionicons
+              style={[styles.listItemNumber]}
+              name={'musical-note'}
+              color={theme === 'light' ? 'black' : 'white'}
+            />
+          </View>
         )}
         <View style={styles.containerName}>
           <Text
@@ -56,7 +63,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   containerFill: {
-    paddingRight: 20,
+    paddingRight: 40,
   },
   listItem: {
     flex: 1,

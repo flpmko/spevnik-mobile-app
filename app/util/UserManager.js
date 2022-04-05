@@ -27,8 +27,8 @@ export const UserProvider = ({ children }) => {
   };
 
   const initSeasons = async () => {
-    const seaons = await getStoredObjectData('seasons');
-    setSeasons(seaons);
+    const sns = await getStoredObjectData('seasons');
+    setSeasons(sns);
   };
 
   const initFavs = async () => {
@@ -37,7 +37,7 @@ export const UserProvider = ({ children }) => {
   };
 
   const resetFavs = async () => {
-    const favs = await removeData('favorites');
+    await removeData('favorites');
     setFavorites([]);
   };
 
@@ -47,7 +47,7 @@ export const UserProvider = ({ children }) => {
   };
 
   const resetPlays = async () => {
-    const plays = await removeData('playlists');
+    await removeData('playlists');
     setPlaylists([]);
   };
 

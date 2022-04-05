@@ -3,20 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import SearchBar from './SearchBar';
 import FilterBar from './filter/FilterBar';
 
-const SearchFilterBar = ({
-  // filters,
-  handleSearch,
-  query,
-  handleFilter,
-}) => {
-  const filters = [
-    'Vianoce',
-    'Advent',
-    'Pôst',
-    'Veľká noc',
-    'Vstúpenie',
-    'Cirkev',
-  ];
+const SearchFilterBar = ({ filters, handleSearch, query, handleFilter }) => {
   return (
     <View>
       <View>

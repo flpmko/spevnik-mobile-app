@@ -251,7 +251,7 @@ type NavigationProps = NativeStackNavigationProp<StackParamList>;
         renderUnderlayLeft={() => <UnderlayLeft playlist={playlist}/>}
         snapPointsLeft={[100]}
       >
-        <View >
+        <View style={[styles[`container${theme}`]]}>
           <TouchableOpacity onLongPress={drag} onPress={() => navigation.navigate("SongDetail", {song: item})} style={[styles.listItem,styles[`background${theme}`]]}>
           <View style={styles.containerLeftIcon}>
             <Ionicons

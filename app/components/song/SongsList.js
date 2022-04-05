@@ -242,9 +242,8 @@ const SongsList = ({ route, navigation }) => {
                 seasonQuery={seasonQuery}
                 setSeasonQuery={setSeasonQuery}
               />
-            ) : (
-              <SearchBar handleSearch={handleSearch} query={query} />
-            )
+            ) : // <SearchBar handleSearch={handleSearch} query={query} />
+            null
           }
         />
       ) : (
