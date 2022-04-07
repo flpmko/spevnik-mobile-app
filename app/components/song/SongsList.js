@@ -7,6 +7,7 @@ import {
   View,
   Text,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import Popover from 'react-native-popover-view/dist/Popover';
 import { Ionicons } from '@expo/vector-icons';
@@ -247,8 +248,8 @@ const SongsList = ({ route, navigation }) => {
           }
         />
       ) : (
-        <View>
-          <Text>loading</Text>
+        <View style={[styles.containerSpinner, styles.horizontal]}>
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       )}
       <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
@@ -261,6 +262,15 @@ export default SongsList;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  containerSpinner: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  horizontal: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 10,
   },
   containerlight: {
     backgroundColor: colors.light,
