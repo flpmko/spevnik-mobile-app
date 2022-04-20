@@ -1,30 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   StyleSheet,
   TouchableOpacity,
   Alert,
   Platform,
-} from 'react-native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Ionicons } from '@expo/vector-icons';
+} from "react-native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { Ionicons } from "@expo/vector-icons";
 
-import { UserContext } from '../util/UserManager';
-import PlaylistList from '../components/playlist/PlaylistList';
-import PlaylistDetail from '../components/playlist/PlaylistDetail';
-import SongDetail from '../components/song/SongDetail';
-import DialogInput from '../components/dialog/DialogInput';
-import playlists_data from '../data/playlists_data';
+import { UserContext } from "../util/UserManager";
+import PlaylistList from "../components/playlist/PlaylistList";
+import PlaylistDetail from "../components/playlist/PlaylistDetail";
+import SongDetail from "../components/song/SongDetail";
+import DialogInput from "../components/dialog/DialogInput";
+import playlists_data from "../data/playlists_data";
 
-import colors from '../config/colors';
-import { storeObjectData } from '../util/LocalStorage';
+import colors from "../config/colors";
+import { storeObjectData } from "../util/LocalStorage";
 
 const PlaylistsScreen = () => {
   const { theme, playlists, setPlaylists } = React.useContext(UserContext);
   const Stack = createNativeStackNavigator();
-  const [heartIcon, setHeartIcon] = useState('heart-outline');
+  const [heartIcon, setHeartIcon] = useState("heart-outline");
   const [visible, setVisible] = useState(false);
-  const [newName, setNewName] = useState('');
+  const [newName, setNewName] = useState("");
   // const [playlists, setPlaylists] = useState(playlists_data);
 
   const createNewPlaylist = async (title) => {
@@ -46,12 +46,12 @@ const PlaylistsScreen = () => {
       const newPlaylist = { number: newNumber, title: title, songs: [] };
       setPlaylists([newPlaylist]);
     }
-    await storeObjectData('playlists', playlists);
-    setNewName('');
+    await storeObjectData("playlists", playlists);
+    setNewName("");
   };
 
   const showPrompt = () => {
-    Alert.prompt('Vyvoriť playlist', 'Zadajte názov nového playlistu', [
+    Alert.prompt("Vyvoriť playlist", "Zadajte názov nového playlistu", [
       {
         onPress: (text) => {
           createNewPlaylist(text);
@@ -78,9 +78,9 @@ const PlaylistsScreen = () => {
   };
 
   const handlePress = () => {
-    heartIcon === 'heart-outline'
-      ? setHeartIcon('ios-heart')
-      : setHeartIcon('heart-outline');
+    heartIcon === "heart-outline"
+      ? setHeartIcon("ios-heart")
+      : setHeartIcon("heart-outline");
   };
 
   return (
@@ -91,19 +91,19 @@ const PlaylistsScreen = () => {
         playlists={playlists}
         initialParams={{ playlists: playlists }}
         options={{
-          headerTitle: 'Playlisty',
+          headerTitle: "Playlisty",
           headerTintColor:
-            theme === 'dark' ? colors.primarydark : colors.primary,
+            theme === "dark" ? colors.primarydark : colors.primary,
           headerRight: () => (
             <View>
               <TouchableOpacity
                 style={styles.addButtonContainer}
-                onPress={Platform.OS === 'ios' ? showPrompt : showDialog}
+                onPress={Platform.OS === "ios" ? showPrompt : showDialog}
               >
                 <Ionicons
                   name="md-add-circle"
                   size={32}
-                  color={theme === 'dark' ? colors.primarydark : colors.primary}
+                  color={theme === "dark" ? colors.primarydark : colors.primary}
                 />
               </TouchableOpacity>
               <DialogInput
@@ -124,7 +124,7 @@ const PlaylistsScreen = () => {
           return {
             headerTitle: route.params.playlist.title,
             headerTintColor:
-              theme === 'dark' ? colors.primarydark : colors.primary,
+              theme === "dark" ? colors.primarydark : colors.primary,
           };
         }}
       />
@@ -133,7 +133,9 @@ const PlaylistsScreen = () => {
         component={SongDetail}
         options={({ route }) => {
           return {
-            headerTitle: 'Pieseň č. ' + route.params.song?.number,
+            headerTitle: route.params.song.number
+              ? "Pieseň č. " + route.params.song.number
+              : route.params.song.title,
             headerTintColor: colors.primary,
             headerRight: () => (
               <TouchableOpacity onPress={handlePress}>
@@ -151,8 +153,8 @@ const PlaylistsScreen = () => {
 
 const styles = StyleSheet.create({
   addButtonContainer: {
-    width: 'auto',
-    display: 'flex',
+    width: "auto",
+    display: "flex",
   },
 });
 

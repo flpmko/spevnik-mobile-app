@@ -1,9 +1,9 @@
-import React from 'react';
-import { Ionicons } from '@expo/vector-icons';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import React from "react";
+import { Ionicons } from "@expo/vector-icons";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 
-import { UserContext } from '../../util/UserManager';
-import colors from '../../config/colors';
+import { UserContext } from "../../util/UserManager";
+import colors from "../../config/colors";
 
 const PlaylistListItem = ({ onPress, item }) => {
   const { theme } = React.useContext(UserContext);
@@ -13,15 +13,26 @@ const PlaylistListItem = ({ onPress, item }) => {
       <View style={styles.listItem}>
         <View style={styles.containerLeftIcon}>
           <Ionicons
-            name={'menu'}
-            color={theme === 'light' ? 'black' : 'white'}
+            name={"menu"}
+            color={theme === "light" ? "black" : "white"}
           />
         </View>
-        <View style={styles.containerNumber}>
-          <Text style={[styles.listItemNumber, styles[`text${theme}`]]}>
-            {item.number}
-          </Text>
-        </View>
+        {item.number ? (
+          <View style={styles.containerNumber}>
+            <Text style={[styles.listItemNumber, styles[`text${theme}`]]}>
+              {item.number}
+            </Text>
+          </View>
+        ) : (
+          <View style={styles.containerNumber}>
+            <Ionicons
+              style={[styles.listItemNumber]}
+              name={"musical-note"}
+              color={theme === "light" ? "black" : "white"}
+            />
+          </View>
+        )}
+
         <View style={styles.containerName}>
           <Text
             style={[styles.listItemName, styles[`text${theme}`]]}
@@ -32,8 +43,8 @@ const PlaylistListItem = ({ onPress, item }) => {
         </View>
         <View style={styles.containerIcon}>
           <Ionicons
-            name={'chevron-forward'}
-            color={theme === 'light' ? 'black' : 'white'}
+            name={"chevron-forward"}
+            color={theme === "light" ? "black" : "white"}
           />
         </View>
       </View>
@@ -46,17 +57,17 @@ export default PlaylistListItem;
 const styles = StyleSheet.create({
   containerLeftIcon: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   containerIcon: {
     flex: 1,
-    alignItems: 'flex-end',
-    justifyContent: 'center',
+    alignItems: "flex-end",
+    justifyContent: "center",
   },
   containerName: {
     flex: 6,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   containerNumber: {
     flex: 1,
@@ -66,11 +77,11 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 10,
     paddingRight: 10,
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   listItemNumber: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   listItemName: {
     fontSize: 18,
