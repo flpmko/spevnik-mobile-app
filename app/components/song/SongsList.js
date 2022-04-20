@@ -120,11 +120,6 @@ const SongsList = ({ route, navigation }) => {
     const timeHymnsLocal = await getStoredData("timeHymnsLocal");
     const timeSongsLocal = await getStoredData("timeSongsLocal");
 
-    console.log("timeHymnsDb = ", timeHymnsDb);
-    console.log("timeSongsDb = ", timeSongsDb);
-    console.log("timeHymnsLocal = ", timeHymnsLocal);
-    console.log("timeSongsLocal = ", timeSongsLocal);
-
     if (timeHymnsLocal !== timeHymnsDb || !seasons || !songs) {
       await storeData("timeHymnsLocal", timeHymnsDb);
       const hymnsDoc = await getDoc(hymnsRef);
@@ -248,7 +243,7 @@ const SongsList = ({ route, navigation }) => {
   });
 
   return (
-    <SafeAreaView style={[styles.container, styles[`container${theme}`]]}>
+    <View style={[styles.container, styles[`container${theme}`]]}>
       {!loading ? (
         <FlatList
           data={songs}
@@ -277,7 +272,7 @@ const SongsList = ({ route, navigation }) => {
         </View>
       )}
       <StatusBar style={theme === "dark" ? "light" : "dark"} />
-    </SafeAreaView>
+    </View>
   );
 };
 
