@@ -158,21 +158,21 @@ const PlaylistDetail = ({ navigation, route }) => {
     </View>
   ), []);
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity onPress={handlePresentModalPress}>
-          <View>
-            <Ionicons
-              name="md-add-circle"
-              size={32}
-              color={theme === 'dark' ? colors.primarydark : colors.primary}
-            />
-          </View>
-        </TouchableOpacity>
-      ),
-    });
-  }, [navigation]);
+  // useLayoutEffect(() => {
+  //   navigation.setOptions({
+  //     headerRight: () => (
+  //       <TouchableOpacity onPress={handlePresentModalPress}>
+  //         <View>
+  //           <Ionicons
+  //             name="md-add-circle"
+  //             size={32}
+  //             color={theme === 'dark' ? colors.primarydark : colors.primary}
+  //           />
+  //         </View>
+  //       </TouchableOpacity>
+  //     ),
+  //   });
+  // }, [navigation]);
 
   return (
     <SafeAreaView style={[styles.container, styles[`container${theme}`]]}>

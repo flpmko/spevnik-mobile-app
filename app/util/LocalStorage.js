@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const storeData = async (key, value) => {
   try {
@@ -43,10 +43,21 @@ const removeData = async (key) => {
   }
 };
 
+const clearAllData = async () => {
+  try {
+    await AsyncStorage.getAllKeys()
+      .then((keys) => AsyncStorage.multiRemove(keys))
+      .then(() => alert("success"));
+  } catch (e) {
+    console.log(e.message);
+  }
+};
+
 export {
   getStoredData,
   getStoredObjectData,
   storeData,
   storeObjectData,
   removeData,
+  clearAllData,
 };
