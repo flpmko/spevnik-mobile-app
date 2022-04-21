@@ -262,8 +262,17 @@ const SongsList = ({ route, navigation }) => {
                 seasonQuery={seasonQuery}
                 setSeasonQuery={setSeasonQuery}
               />
-            ) : // <SearchBar handleSearch={handleSearch} query={query} />
-            null
+            ) : (
+              !route.params.filters && (
+                // <SearchBar handleSearch={handleSearch} query={query} />
+                <View style={styles.containerFavs}>
+                  <Text style={[styles.textFavs, styles[`textFavs${theme}`]]}>
+                    Všetky tvoje obľúbené piesne na jednom mieste.
+                  </Text>
+                </View>
+              )
+            )
+            // null
           }
         />
       ) : (
@@ -271,7 +280,6 @@ const SongsList = ({ route, navigation }) => {
           <ActivityIndicator size="large" color={colors.primary} />
         </View>
       )}
-      <StatusBar style={theme === "dark" ? "light" : "dark"} />
     </View>
   );
 };
@@ -316,6 +324,11 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     paddingVertical: 10,
   },
+  containerFavs: {
+    display: "flex",
+    flex: 1,
+    // height: 20,
+  },
   iconPopup: {
     paddingHorizontal: 10,
   },
@@ -329,6 +342,10 @@ const styles = StyleSheet.create({
   },
   arrowStyle: {
     backgroundColor: colors.light,
+  },
+  textFavs: {
+    fontSize: 30,
+    padding: 10,
   },
   textInput: {
     backgroundColor: colors.lightgray,
@@ -345,5 +362,15 @@ const styles = StyleSheet.create({
   },
   textlight: {
     color: colors.black,
+  },
+  textFavsdark: {
+    // color: colors.darkgray,
+    color: colors.primarydark,
+    opacity: 0.3,
+  },
+  textFavslight: {
+    // color: colors.dark_placeholder,
+    color: colors.primary,
+    opacity: 0.3,
   },
 });

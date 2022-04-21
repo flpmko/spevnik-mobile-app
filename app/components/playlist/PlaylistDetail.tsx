@@ -259,11 +259,21 @@ type NavigationProps = NativeStackNavigationProp<StackParamList>;
               color={theme === "light" ? "black" : "white"}
             />
           </View>
+          {item.number ? (
           <View style={styles.containerNumber}>
             <Text style={[styles.listItemNumber, styles[`text${theme}`]]}>
               {item.number}
             </Text>
           </View>
+        ) : (
+          <View style={styles.containerNumber}>
+            <Ionicons
+              style={[styles.listItemNumber]}
+              name={"musical-note"}
+              color={theme === "light" ? "black" : "white"}
+            />
+          </View>
+        )}
           <View style={styles.containerName}>
             <Text
               style={[styles.listItemName, styles[`text${theme}`]]}
@@ -400,7 +410,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "flex-end",
-    padding: 15,
+    paddingRight: 15,
   },
   text: {
     fontWeight: "bold",
