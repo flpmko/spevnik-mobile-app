@@ -338,6 +338,20 @@ const SettingsScreen = () => {
         <View style={styles.containerSeparator}>
           <Separator />
         </View>
+        <View style={[styles.containerItem, styles[`background${theme}`]]}>
+          <Text style={[styles.textButton, styles[`text${theme}`]]}>
+            Nahlásiť chybu
+          </Text>
+          <View style={styles.containerRight}>
+            <Text style={[styles.textButton, styles.textLink]}>
+              odkaz na formulár
+            </Text>
+            <Ionicons name={"open"} size={32} color={colors.primary} />
+          </View>
+        </View>
+        <View style={styles.containerSeparator}>
+          <Separator />
+        </View>
         <View style={styles.containerFooter}>
           <Text style={[styles.textLabel, styles.textFooter]}>
             © Filip Šimko, 2022

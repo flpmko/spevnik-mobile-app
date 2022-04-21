@@ -15,35 +15,21 @@ import {
   View,
 } from "react-native";
 import { BottomSheetModal, BottomSheetFlatList } from "@gorhom/bottom-sheet";
-import { Ionicons } from "@expo/vector-icons";
-import Popover from "react-native-popover-view/dist/Popover";
-import * as Linking from "expo-linking";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 
 import { UserContext } from "../../util/UserManager";
-import {
-  getStoredData,
-  getStoredObjectData,
-  storeData,
-  storeObjectData,
-} from "../../util/LocalStorage";
+import { storeObjectData } from "../../util/LocalStorage";
 import colors from "../../config/colors";
-import playlists_data from "../../data/playlists_data";
-import Separator from "../list/Separator";
 
 const SongDetail = ({ route, navigation }) => {
   const { theme, fontSize, favorites, setFavorites, playlists } =
     React.useContext(UserContext);
   const Playlists = playlists;
-  const [isPopoverVisible, setisPopoverVisible] = useState(false);
   const [heartIcon, setHeartIcon] = useState("heart-outline");
   const bottomSheetModalRef = useRef(null);
 
   // variables
   const snapPoints = useMemo(() => ["25%", "50%", "90%"], []);
-
-  const handleSheetChanges = useCallback((index) => {
-    // console.log('handleSheetChanges', index);
-  }, []);
 
   const renderItem = useCallback(
     ({ item }) => (
@@ -76,14 +62,6 @@ const SongDetail = ({ route, navigation }) => {
       fontSize: fontSize,
     },
   });
-
-  const handleLinkPress = (url) => {
-    Linking.openURL(url);
-  };
-
-  const togglePopover = () => {
-    setisPopoverVisible(!isPopoverVisible);
-  };
 
   const handlePress = () => {
     if (heartIcon === "heart-outline") {
@@ -123,9 +101,8 @@ const SongDetail = ({ route, navigation }) => {
   };
 
   const handlePresentModalPress = useCallback(() => {
-    togglePopover();
     bottomSheetModalRef.current?.present();
-  }, [isPopoverVisible]);
+  }, []);
 
   const handleDismissModalPress = useCallback(() => {
     bottomSheetModalRef.current?.dismiss();
@@ -158,57 +135,17 @@ const SongDetail = ({ route, navigation }) => {
             color={theme === "dark" ? colors.primarydark : colors.primary}
             onPress={handlePress}
           />
-          <Popover
-            isVisible={isPopoverVisible}
-            onRequestClose={togglePopover}
-            popoverStyle={styles.popoverStyle}
-            arrowStyle={styles.arrowStyle}
-            from={
-              <TouchableOpacity onPress={togglePopover}>
-                <Ionicons
-                  name={"ellipsis-vertical"}
-                  size={28}
-                  color={theme === "dark" ? colors.primarydark : colors.primary}
-                />
-              </TouchableOpacity>
-            }
-          >
-            <View>
-              <TouchableOpacity
-                style={styles.containerPopup}
-                onPress={handlePresentModalPress}
-              >
-                <Ionicons
-                  name={"add"}
-                  size={28}
-                  style={styles.iconPopup}
-                  color={theme === "dark" ? colors.primarydark : colors.primary}
-                />
-                <Text style={styles.textPopup}>Pridať do playlistu</Text>
-              </TouchableOpacity>
-              <Separator />
-              <TouchableOpacity
-                style={styles.containerPopup}
-                onPress={() =>
-                  handleLinkPress(
-                    "https://github.com/flpmko/spevnik-mobile-app"
-                  )
-                }
-              >
-                <Ionicons
-                  name={"bug"}
-                  size={28}
-                  style={styles.iconPopup}
-                  color={theme === "dark" ? colors.primarydark : colors.primary}
-                />
-                <Text style={styles.textPopup}>Nahlásiť chybu</Text>
-              </TouchableOpacity>
-            </View>
-          </Popover>
+          <MaterialIcons
+            name={"playlist-add"}
+            style={{ paddingLeft: 10 }}
+            size={28}
+            color={theme === "dark" ? colors.primarydark : colors.primary}
+            onPress={handlePresentModalPress}
+          />
         </View>
       ),
     });
-  }, [navigation, isPopoverVisible, heartIcon]);
+  }, [navigation, heartIcon]);
 
   return (
     <SafeAreaView>
@@ -219,7 +156,6 @@ const SongDetail = ({ route, navigation }) => {
           style={[styles.shadow, styles[`shadow${theme}`]]}
           backgroundStyle={[styles[`containerSheet${theme}`]]}
           snapPoints={snapPoints}
-          onChange={handleSheetChanges}
         >
           <BottomSheetFlatList
             data={Playlists}
