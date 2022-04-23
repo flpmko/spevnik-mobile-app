@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Appearance } from 'react-native';
+import React, { useEffect, useState } from "react";
+import { Appearance } from "react-native";
 
-import { getStoredObjectData, removeData } from './LocalStorage';
+import { getStoredObjectData, removeData } from "./LocalStorage";
 
 export const UserContext = React.createContext();
 
@@ -12,42 +12,42 @@ export const UserProvider = ({ children }) => {
   const [favorites, setFavorites] = useState([]);
   const [playlists, setPlaylists] = useState([]);
   const [seasons, setSeasons] = useState([]);
-  const [activeFilter, setActiveFilter] = useState('');
+  const [activeFilter, setActiveFilter] = useState("");
 
   const resetFontSize = () => {
     setFontSize(20);
   };
 
   const toggleTheme = () => {
-    if (theme === 'light') {
-      setTheme('dark');
+    if (theme === "light") {
+      setTheme("dark");
     } else {
-      setTheme('light');
+      setTheme("light");
     }
   };
 
   const initSeasons = async () => {
-    const sns = await getStoredObjectData('seasons');
+    const sns = await getStoredObjectData("seasons");
     setSeasons(sns);
   };
 
   const initFavs = async () => {
-    const favs = await getStoredObjectData('favorites');
+    const favs = await getStoredObjectData("favorites");
     setFavorites(favs);
   };
 
   const resetFavs = async () => {
-    await removeData('favorites');
+    await removeData("favorites");
     setFavorites([]);
   };
 
   const initPlays = async () => {
-    const plays = await getStoredObjectData('playlists');
+    const plays = await getStoredObjectData("playlists");
     setPlaylists(plays);
   };
 
   const resetPlays = async () => {
-    await removeData('playlists');
+    await removeData("playlists");
     setPlaylists([]);
   };
 

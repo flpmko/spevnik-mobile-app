@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "spevnik-mobile-app",
-    "slug": "spevnik-mobile-app",
+    "name": "Spevník",
+    "slug": "spevnik",
     "version": "1.0.0",
     "orientation": "default",
     "icon": "./app/assets/icon.png",
@@ -17,12 +17,16 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.flpmko.spevnik",
+      "buildNumber": "1.0.0"
     },
     "android": {
       "adaptiveIcon": {
+        "package": "com.flpmko.spevnik",
         "foregroundImage": "./app/assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "backgroundColor": "#FFFFFF",
+        "versionCode": 1
       }
     },
     "web": {

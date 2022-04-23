@@ -17,7 +17,7 @@ const FilterBar = ({ data, handleFilter }) => {
       fadeSize={50}
       fadeColors={
         theme === "light"
-          ? ["rgba(255, 255, 255, 0)", "rgba(255,255,255, 1)"]
+          ? ["rgba(245, 245, 245, 0)", "rgba(245,245,245, 1)"]
           : ["rgba(33, 33, 33, 0)", "rgba(33,33,33, 1)"]
       }
     >
