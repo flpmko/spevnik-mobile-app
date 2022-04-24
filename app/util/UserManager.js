@@ -33,7 +33,7 @@ export const UserProvider = ({ children }) => {
 
   const initFavs = async () => {
     const favs = await getStoredObjectData("favorites");
-    setFavorites(favs);
+    setFavorites(favs ? favs : []);
   };
 
   const resetFavs = async () => {
@@ -43,7 +43,7 @@ export const UserProvider = ({ children }) => {
 
   const initPlays = async () => {
     const plays = await getStoredObjectData("playlists");
-    setPlaylists(plays);
+    setPlaylists(plays ? plays : []);
   };
 
   const resetPlays = async () => {

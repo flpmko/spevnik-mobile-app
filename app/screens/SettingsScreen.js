@@ -78,7 +78,6 @@ const SettingsScreen = () => {
     Alert.alert("Vymazať", "Naozaj chcete vymazať " + item + "?", [
       {
         text: "Zrušiť",
-        onPress: () => console.log("Cancel Pressed"),
         style: "cancel",
       },
       {

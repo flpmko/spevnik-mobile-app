@@ -31,7 +31,6 @@ import SearchBar from "../SearchBar";
 import SearchFilterBar from "../SearchFilterBar";
 
 import colors from "../../config/colors";
-import songs_data from "../../data/songs_data";
 
 const SongsList = ({ route, navigation }) => {
   // ignore firebase timer warning for android
@@ -190,6 +189,10 @@ const SongsList = ({ route, navigation }) => {
     setSongs(showFilters ? songs : favorites);
   }, [favorites]);
 
+  useEffect(() => {
+    console.log("zmena");
+  }, [favorites]);
+
   useLayoutEffect(() => {
     if (route.params.filters) {
       navigation.setOptions({
@@ -272,7 +275,6 @@ const SongsList = ({ route, navigation }) => {
                 </View>
               )
             )
-            // null
           }
         />
       ) : (

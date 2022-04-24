@@ -1,27 +1,26 @@
-import React from 'react';
-import { StyleSheet, SafeAreaView, FlatList, Alert } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
+import React from "react";
+import { StyleSheet, SafeAreaView, FlatList, Alert } from "react-native";
+import { StatusBar } from "expo-status-bar";
 
-import { UserContext } from '../../util/UserManager';
-import PlaylistItem from './PlaylistItem';
-import colors from '../../config/colors';
-import { storeObjectData } from '../../util/LocalStorage';
+import { UserContext } from "../../util/UserManager";
+import PlaylistItem from "./PlaylistItem";
+import colors from "../../config/colors";
+import { storeObjectData } from "../../util/LocalStorage";
 
 const PlaylistList = (props) => {
   const { theme, playlists, setPlaylists } = React.useContext(UserContext);
   // const Playlists = playlists; //props.route.params.playlists;
 
   const onDeleteItem = (item) =>
-    Alert.alert('Vymazať', 'Naozaj chcete tento playlist vymazať?', [
+    Alert.alert("Vymazať", "Naozaj chcete tento playlist vymazať?", [
       {
-        text: 'Zrušiť',
-        onPress: () => console.log('Cancel Pressed'),
-        style: 'cancel',
+        text: "Zrušiť",
+        style: "cancel",
       },
       {
-        text: 'Odstrániť',
+        text: "Odstrániť",
         onPress: () => removePlaylist(item),
-        style: 'destructive',
+        style: "destructive",
       },
     ]);
 
@@ -29,7 +28,7 @@ const PlaylistList = (props) => {
     if (playlists) {
       const updatedPlaylists = playlists.filter((i) => i.title != item.title);
       setPlaylists(updatedPlaylists);
-      await storeObjectData('playlists', updatedPlaylists);
+      await storeObjectData("playlists", updatedPlaylists);
     }
   };
 
@@ -45,14 +44,14 @@ const PlaylistList = (props) => {
             <PlaylistItem
               item={item}
               onPressItem={() =>
-                props.navigation.push('PlaylistDetail', { playlist: item })
+                props.navigation.push("PlaylistDetail", { playlist: item })
               }
               onPressIcon={() => onDeleteItem(item)}
             />
           );
         }}
       />
-      <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
+      <StatusBar style={theme === "dark" ? "light" : "dark"} />
     </SafeAreaView>
   );
 };

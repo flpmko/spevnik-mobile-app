@@ -76,7 +76,6 @@ const SongDetail = ({ route, navigation }) => {
   const addFavorite = async () => {
     if (favorites) {
       favorites.push(route.params.song);
-      setFavorites(favorites);
       await storeObjectData("favorites", favorites);
     } else {
       const newFavorites = [route.params.song];
