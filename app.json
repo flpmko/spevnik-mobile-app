@@ -4,11 +4,12 @@
     "slug": "spevnik",
     "version": "1.0.0",
     "orientation": "default",
+    "userInterfaceStyle": "automatic",
     "icon": "./app/assets/icon.png",
     "splash": {
       "image": "./app/assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#256480"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -26,7 +27,7 @@
       "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./app/assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "backgroundColor": "#256480"
       }
     },
     "web": {

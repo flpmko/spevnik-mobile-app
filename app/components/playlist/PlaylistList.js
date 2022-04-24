@@ -9,7 +9,6 @@ import { storeObjectData } from "../../util/LocalStorage";
 
 const PlaylistList = (props) => {
   const { theme, playlists, setPlaylists } = React.useContext(UserContext);
-  // const Playlists = playlists; //props.route.params.playlists;
 
   const onDeleteItem = (item) =>
     Alert.alert("Vymazať", "Naozaj chcete tento playlist vymazať?", [
