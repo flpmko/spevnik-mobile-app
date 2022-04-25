@@ -82,7 +82,7 @@ const SettingsScreen = () => {
 
   const sendEmail = () => {
     Linking.openURL(
-      "mailto:support@example.com?subject=Nahlásenie chyby&body=\n\n" +
+      "mailto:evanjelicky.spevnik@gmail.com?subject=Nahlásenie chyby&body=\n\n" +
         JSON.stringify(info)
     );
   };
@@ -366,7 +366,7 @@ const SettingsScreen = () => {
           <TouchableOpacity
             style={styles.containerRight}
             onPress={() =>
-              handleLinkPress("https://forms.gle/bFcHArgt9rqvxn2Q9")
+              handleLinkPress("https://forms.gle/mtpFiQSnTPUt1YND8")
             }
           >
             <Text style={[styles.textButton, styles.textLink]}>
