@@ -380,7 +380,24 @@ const SettingsScreen = () => {
         </View>
         <View style={[styles.containerItem, styles[`background${theme}`]]}>
           <Text style={[styles.textButton, styles[`text${theme}`]]}>
-            Nahlásiť chybu
+            Nahlásiť chybu v piesni
+          </Text>
+          <TouchableOpacity
+            style={styles.containerRight}
+            onPress={() =>
+              handleLinkPress("https://forms.gle/BiGNYxjaU9VXHZP2A")
+            }
+          >
+            <Text style={[styles.textButton, styles.textLink]}>nahlásiť</Text>
+            <Ionicons name={"open"} size={32} color={colors.primary} />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.containerSeparator}>
+          <Separator />
+        </View>
+        <View style={[styles.containerItem, styles[`background${theme}`]]}>
+          <Text style={[styles.textButton, styles[`text${theme}`]]}>
+            Nahlásiť chybu v aplikácii
           </Text>
           <TouchableOpacity style={styles.containerRight} onPress={sendEmail}>
             <Text style={[styles.textButton, styles.textLink]}>nahlásiť</Text>

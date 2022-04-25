@@ -152,6 +152,7 @@ const SongsList = ({ route, navigation }) => {
         locData = await getStoredObjectData("hymnsData");
         locData?.sort((a, b) => a?.number - b?.number);
         locDataMod = await getStoredObjectData("modern");
+        locDataMod?.sort((a, b) => (a.title > b.title ? 1 : -1));
       } else {
         locData = favorites;
         locData?.sort((a, b) => (a.title > b.title ? 1 : -1));
@@ -161,7 +162,6 @@ const SongsList = ({ route, navigation }) => {
         setSongs(locData);
       }
       if (locDataMod) {
-        locDataMod.sort((a, b) => (a.title > b.title ? 1 : -1));
         setModern(locDataMod);
       }
       if (showFilters) {
@@ -169,7 +169,7 @@ const SongsList = ({ route, navigation }) => {
           if (isInternetReachable) {
             await fetchFromDb();
           } else {
-            if (!locData) {
+            if (locData === null) {
               Alert.alert(
                 "Upozornenie",
                 "Pre prvé spustenie aplikácie je potrebné internetové pripojenie. Vypnite prosím aplikáciu, pripojte sa na internet a potom aplikáciu opäť spustite."

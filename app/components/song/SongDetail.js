@@ -14,6 +14,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import RNFadedScrollView from "rn-faded-scrollview";
 import { BottomSheetModal, BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 
@@ -144,7 +145,7 @@ const SongDetail = ({ route, navigation }) => {
         </View>
       ),
     });
-  }, [navigation, heartIcon]);
+  }, [navigation, heartIcon, theme]);
 
   return (
     <SafeAreaView>
@@ -172,15 +173,25 @@ const SongDetail = ({ route, navigation }) => {
           </View>
           {route.params.song.season ? (
             <View style={styles.containerCategory}>
-              <Text style={[styles.textCategory, styles[`text${theme}`]]}>
+              <Text
+                style={[styles.textCategory, styles[`textCategory${theme}`]]}
+              >
                 {route.params.song.season}
               </Text>
             </View>
           ) : (
-            <ScrollView
+            <RNFadedScrollView
               contentContainerStyle={styles.containerChords}
               horizontal={true}
               showsHorizontalScrollIndicator={false}
+              allowStartFade={true}
+              allowEndFade={true}
+              fadeSize={50}
+              fadeColors={
+                theme === "light"
+                  ? ["rgba(245, 245, 245, 0)", "rgba(245,245,245, 1)"]
+                  : ["rgba(33, 33, 33, 0)", "rgba(33,33,33, 1)"]
+              }
             >
               {route.params.song.chords.map((e, i) => (
                 <View
@@ -195,7 +206,7 @@ const SongDetail = ({ route, navigation }) => {
                   </Text>
                 </View>
               ))}
-            </ScrollView>
+            </RNFadedScrollView>
           )}
         </View>
         <View style={[styles.containerText, styles.container]}>
@@ -358,6 +369,12 @@ const styles = StyleSheet.create({
   },
   textlight: {
     color: colors.black,
+  },
+  textCategorydark: {
+    color: colors.dark_placeholder,
+  },
+  textCategorylight: {
+    color: colors.light_placeholder,
   },
   shadow: {
     shadowOffset: {
