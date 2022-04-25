@@ -32,8 +32,9 @@ export const UserProvider = ({ children }) => {
   };
 
   const initFavs = async () => {
-    const favs = await getStoredObjectData("favorites");
-    setFavorites(favs ? favs : []);
+    await getStoredObjectData("favorites").then((favs) =>
+      setFavorites(favs ? favs : [])
+    );
   };
 
   const resetFavs = async () => {
@@ -42,8 +43,9 @@ export const UserProvider = ({ children }) => {
   };
 
   const initPlays = async () => {
-    const plays = await getStoredObjectData("playlists");
-    setPlaylists(plays ? plays : []);
+    await getStoredObjectData("playlists").then((plays) =>
+      setPlaylists(plays ? plays : [])
+    );
   };
 
   const resetPlays = async () => {

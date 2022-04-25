@@ -189,10 +189,6 @@ const SongsList = ({ route, navigation }) => {
     setSongs(showFilters ? songs : favorites);
   }, [favorites]);
 
-  useEffect(() => {
-    console.log("zmena");
-  }, [favorites]);
-
   useLayoutEffect(() => {
     if (route.params.filters) {
       navigation.setOptions({
@@ -250,6 +246,8 @@ const SongsList = ({ route, navigation }) => {
       {!loading ? (
         <FlatList
           data={songs}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
           keyExtractor={(item) => (item.number ? item.number : item.title)}
           renderItem={({ item }) => {
             return <ListItem item={item} onPress={() => goToSong(item)} />;

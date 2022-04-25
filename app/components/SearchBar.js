@@ -1,9 +1,9 @@
-import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
-import { StyleSheet, View, TextInput } from 'react-native';
+import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import { StyleSheet, View, TextInput } from "react-native";
 
-import colors from '../config/colors';
-import { UserContext } from '../util/UserManager';
+import colors from "../config/colors";
+import { UserContext } from "../util/UserManager";
 
 const SearchBar = ({ handleSearch, query }) => {
   const { theme } = React.useContext(UserContext);
@@ -11,7 +11,7 @@ const SearchBar = ({ handleSearch, query }) => {
     <View style={styles.container}>
       <View style={[styles.containerSearch, styles[`container${theme}`]]}>
         <Ionicons
-          name={'ios-search'}
+          name={"ios-search"}
           size={24}
           style={{ paddingRight: 5 }}
           color={colors.light_placeholder}
@@ -22,11 +22,11 @@ const SearchBar = ({ handleSearch, query }) => {
           autoCapitalize="none"
           placeholder="vyhľadaj pieseň"
           placeholderTextColor={
-            theme === 'light'
+            theme === "light"
               ? colors.light_placeholder
               : colors.dark_placeholder
           }
-          keyboardType="numeric"
+          keyboardType="number-pad"
           keyboardAppearance={theme}
           clearButtonMode="always"
           value={query}
@@ -41,17 +41,17 @@ export default SearchBar;
 
 const styles = StyleSheet.create({
   container: {
-    display: 'flex',
-    alignItems: 'center',
+    display: "flex",
+    alignItems: "center",
     marginVertical: 10,
   },
   containerSearch: {
-    width: '95 %',
+    width: "95 %",
     flex: 1,
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     padding: 10,
     borderWidth: 0,
     borderRadius: 20,

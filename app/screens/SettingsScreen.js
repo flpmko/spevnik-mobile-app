@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -8,10 +8,13 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  Appearance,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as Linking from "expo-linking";
 import { activateKeepAwake, deactivateKeepAwake } from "expo-keep-awake";
+import * as Device from "expo-device";
+import * as Application from "expo-application";
 
 import { UserContext } from "../util/UserManager";
 import colors from "../config/colors";
@@ -34,6 +37,26 @@ const SettingsScreen = () => {
   );
   const [isLockEnabled, setIsLockEnabled] = useState(false);
 
+  const info = [
+    {
+      _header: "SYSTEM INFO",
+      manufacturer: Device.manufacturer,
+      model: Device.modelName,
+      system: Device.osName,
+      version: Device.osVersion,
+      build: Device.osBuildId,
+      theme: Appearance.getColorScheme(),
+    },
+    {
+      _header: "APPLICATION INFO",
+      id: Application.applicationId,
+      name: Application.applicationName,
+      version: Application.nativeApplicationVersion,
+      build: Application.nativeBuildVersion,
+      theme: theme,
+    },
+  ];
+
   const toggleThemeSwitch = () => {
     setIsThemeEnabled((previousIsThemeEnabled) => !previousIsThemeEnabled);
     toggleTheme();
@@ -53,8 +76,15 @@ const SettingsScreen = () => {
     toggleLockSwitch();
   };
 
-  const handleLinkPress = (route) => {
-    Linking.openURL(route);
+  const handleLinkPress = (url) => {
+    Linking.openURL(url);
+  };
+
+  const sendEmail = () => {
+    Linking.openURL(
+      "mailto:support@example.com?subject=Nahlásenie chyby&body=\n\n" +
+        JSON.stringify(info)
+    );
   };
 
   const handleSliderDrag = useCallback(
@@ -67,7 +97,7 @@ const SettingsScreen = () => {
   const clearCache = async (key) => {
     if (key === "playlisty") {
       await resetPlays();
-    } else if (key === "all") {
+    } else if (key === "všetko") {
       await clearAllData().then(resetPlays()).then(resetFavs());
     } else {
       await resetFavs();
@@ -247,15 +277,15 @@ const SettingsScreen = () => {
           <Text style={[styles.textButton, styles[`text${theme}`]]}>
             Vymazať obľúbené
           </Text>
-          <View style={styles.containerRight}>
-            <Text
-              style={[styles.textButton, { color: colors.red }]}
-              onPress={() => onDeleteItem("obľubené")}
-            >
+          <TouchableOpacity
+            style={styles.containerRight}
+            onPress={() => onDeleteItem("obľubené")}
+          >
+            <Text style={[styles.textButton, { color: colors.red }]}>
               vymazať
             </Text>
             <Ionicons name={"ios-trash-bin"} size={32} color={colors.red} />
-          </View>
+          </TouchableOpacity>
         </View>
         <View style={styles.containerSeparator}>
           <Separator />
@@ -264,32 +294,38 @@ const SettingsScreen = () => {
           <Text style={[styles.textButton, styles[`text${theme}`]]}>
             Vymazať playlisty
           </Text>
-          <View style={styles.containerRight}>
-            <Text
-              style={[styles.textButton, { color: colors.red }]}
-              onPress={() => onDeleteItem("playlisty")}
-            >
+          <TouchableOpacity
+            style={styles.containerRight}
+            onPress={() => onDeleteItem("playlisty")}
+          >
+            <Text style={[styles.textButton, { color: colors.red }]}>
               vymazať
             </Text>
             <Ionicons name={"ios-trash-bin"} size={32} color={colors.red} />
-          </View>
+          </TouchableOpacity>
         </View>
         <View style={styles.containerSeparator}>
           <Separator />
         </View>
-        <View style={[styles.containerItem, styles[`background${theme}`]]}>
-          <Text style={[styles.textButton, styles[`text${theme}`]]}>
-            Vymazať všetko
-          </Text>
-          <View style={styles.containerRight}>
-            <Text
-              style={[styles.textButton, { color: colors.red }]}
-              onPress={() => onDeleteItem("all")}
-            >
-              vymazať
+        <View style={[styles.containerCaption, styles[`background${theme}`]]}>
+          <View style={[styles.containerItem, styles[`background${theme}`]]}>
+            <Text style={[styles.textButton, styles[`text${theme}`]]}>
+              Vymazať všetko
             </Text>
-            <Ionicons name={"ios-trash-bin"} size={32} color={colors.red} />
+            <TouchableOpacity
+              style={styles.containerRight}
+              onPress={() => onDeleteItem("všetko")}
+            >
+              <Text style={[styles.textButton, { color: colors.red }]}>
+                vymazať
+              </Text>
+              <Ionicons name={"ios-trash-bin"} size={32} color={colors.red} />
+            </TouchableOpacity>
           </View>
+          <Text style={[styles.textCaption, styles[`textCaption${theme}`]]}>
+            Vymaže všetky playlisty, vyčistí zoznam obľúbených piesní a odstráni
+            všetky dáta, ktoré si aplikácia uložila na vašom telefóne.
+          </Text>
         </View>
         <View style={styles.containerSeparator}>
           <Separator />
@@ -304,13 +340,13 @@ const SettingsScreen = () => {
           <Text style={[styles.textButton, styles[`text${theme}`]]}>
             Github projekt
           </Text>
-          <View style={styles.containerRight}>
-            <Text
-              style={[styles.textButton, styles.textLink]}
-              onPress={() =>
-                handleLinkPress("https://github.com/flpmko/spevnik-mobile-app")
-              }
-            >
+          <TouchableOpacity
+            style={styles.containerRight}
+            onPress={() =>
+              handleLinkPress("https://github.com/flpmko/spevnik-mobile-app")
+            }
+          >
+            <Text style={[styles.textButton, styles.textLink]}>
               odkaz na repozitár
             </Text>
             <Ionicons
@@ -318,7 +354,7 @@ const SettingsScreen = () => {
               size={32}
               color={colors.primary}
             />
-          </View>
+          </TouchableOpacity>
         </View>
         <View style={styles.containerSeparator}>
           <Separator />
@@ -327,12 +363,17 @@ const SettingsScreen = () => {
           <Text style={[styles.textButton, styles[`text${theme}`]]}>
             Vyžiadať pieseň
           </Text>
-          <View style={styles.containerRight}>
+          <TouchableOpacity
+            style={styles.containerRight}
+            onPress={() =>
+              handleLinkPress("https://forms.gle/bFcHArgt9rqvxn2Q9")
+            }
+          >
             <Text style={[styles.textButton, styles.textLink]}>
               odkaz na formulár
             </Text>
             <Ionicons name={"open"} size={32} color={colors.primary} />
-          </View>
+          </TouchableOpacity>
         </View>
         <View style={styles.containerSeparator}>
           <Separator />
@@ -341,12 +382,10 @@ const SettingsScreen = () => {
           <Text style={[styles.textButton, styles[`text${theme}`]]}>
             Nahlásiť chybu
           </Text>
-          <View style={styles.containerRight}>
-            <Text style={[styles.textButton, styles.textLink]}>
-              odkaz na formulár
-            </Text>
-            <Ionicons name={"open"} size={32} color={colors.primary} />
-          </View>
+          <TouchableOpacity style={styles.containerRight} onPress={sendEmail}>
+            <Text style={[styles.textButton, styles.textLink]}>nahlásiť</Text>
+            <Ionicons name={"bug"} size={32} color={colors.primary} />
+          </TouchableOpacity>
         </View>
         <View style={styles.containerSeparator}>
           <Separator />
