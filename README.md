@@ -15,7 +15,7 @@
 </h2>
 
 # spevnik-mobile-app
-Moja bakalárska práca, alebo teda časť z nej.
+Moja bakalárska práca, alebo teda časť z nej. Druhá časť je [tu](https://github.com/flpmko/spevnik-web-app).
 ## Predslov
 Cieľom bakalárskej práce bolo vytvoriť natívnu mobilnú aplikáciu pre platformy iOS a Android, ktorá bude slúžiť ako spevník evanjelických piesní. Túto tému som si vybral sám, nakoľko som už niekoľko rokov chcel vytvoriť evanjelický spevník pre iOS. Pre Android boli viaceré aplikácie no pre iOS žiadne a tak som sa rozhodol mojou bakalárkou aj trochu prispieť do spoločnosti.
 ## O aplikácii
