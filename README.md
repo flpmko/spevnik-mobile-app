@@ -21,4 +21,6 @@ Cieľom bakalárskej práce bolo vytvoriť natívnu mobilnú aplikáciu pre plat
 ## O aplikácii
 Aplikácia zobrazuje spevníkové piesne a tiež piesne mládežnícke. Spevníkové piesne je možné vyhľadávať podľa čísla piesne. Používateľ má tiež možnosť vytvárať vlastné zoznamy piesní (playlisty) a označovať piesne ako obľúbené. V nastaveniach sú možnosti prepnutia farebnej témy, zmena veľkosti textu, správa úložiska a užitočné odkazy.
 ## Technológie
-Aplikácia je vytvorená pomocou frameworku [React Native](https://reactnative.dev/) cez [Expo](https://expo.dev/) managed workflow. Pre databázu je použitá služba[Firestore](https://firebase.google.com/docs/firestore).
+Aplikácia je vytvorená pomocou frameworku [React Native](https://reactnative.dev/) cez [Expo](https://expo.dev/) managed workflow. Pre databázu je použitá služba [Firestore](https://firebase.google.com/docs/firestore).
+## Možnosť zpojiť sa
+Momentálne hľadáme testerov pre Android verziu aplikácie, takže ak máte záujem, napíšte nám na [evanjelicky.spevnik@gmail.com](mailto:evanjelicky.spevnik@gmail.com).
