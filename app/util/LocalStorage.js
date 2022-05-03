@@ -45,9 +45,9 @@ const removeData = async (key) => {
 
 const clearAllData = async () => {
   try {
-    await AsyncStorage.getAllKeys()
-      .then((keys) => AsyncStorage.multiRemove(keys))
-      .then(() => alert("success"));
+    await AsyncStorage.getAllKeys().then((keys) =>
+      AsyncStorage.multiRemove(keys)
+    );
   } catch (e) {
     console.log(e.message);
   }

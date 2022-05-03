@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import {
   StyleSheet,
   Text,
@@ -20,7 +20,7 @@ import { UserContext } from "../util/UserManager";
 import colors from "../config/colors";
 import Separator from "../components/list/Separator";
 import Slider from "@react-native-community/slider";
-import { removeData, clearAllData } from "../util/LocalStorage";
+import { clearAllData } from "../util/LocalStorage";
 
 const SettingsScreen = () => {
   const {
@@ -39,7 +39,7 @@ const SettingsScreen = () => {
 
   const info = [
     {
-      _header: "SYSTEM INFO",
+      _header: "SYSTEM-INFO",
       manufacturer: Device.manufacturer,
       model: Device.modelName,
       system: Device.osName,
@@ -48,7 +48,7 @@ const SettingsScreen = () => {
       theme: Appearance.getColorScheme(),
     },
     {
-      _header: "APPLICATION INFO",
+      _header: "APPLICATION-INFO",
       id: Application.applicationId,
       name: Application.applicationName,
       version: Application.nativeApplicationVersion,
@@ -83,8 +83,16 @@ const SettingsScreen = () => {
   const sendEmail = () => {
     Linking.openURL(
       "mailto:evanjelicky.spevnik@gmail.com?subject=Nahlásenie chyby&body=\n\n" +
-        JSON.stringify(info)
+        formatInfo(JSON.stringify(info))
     );
+  };
+
+  const formatInfo = (string) => {
+    return string
+      .replace(/[\])}[{("]/g, "")
+      .replace(/[,_]/g, "\n")
+      .replace(/:/g, ": ")
+      .replace(/header: /g, "");
   };
 
   const handleSliderDrag = useCallback(
@@ -96,11 +104,35 @@ const SettingsScreen = () => {
 
   const clearCache = async (key) => {
     if (key === "playlisty") {
-      await resetPlays();
+      await resetPlays().then(() =>
+        Alert.alert(
+          "Hotovo",
+          "Všetky " + formatString(key) + " úspešne vymazané"
+        )
+      );
     } else if (key === "všetko") {
-      await clearAllData().then(resetPlays()).then(resetFavs());
+      await clearAllData()
+        .then(resetPlays())
+        .then(resetFavs())
+        .then(() => Alert.alert("Hotovo", "Všetky dáta úspešne vymazané"));
     } else {
-      await resetFavs();
+      await resetFavs().then(() =>
+        Alert.alert(
+          "Hotovo",
+          "Všetky " + formatString(key) + " úspešne vymazané"
+        )
+      );
+    }
+  };
+
+  const formatString = (key) => {
+    switch (key) {
+      case "playlists":
+        return "playlisty";
+      case "favorites":
+        return "obľúbené";
+      default:
+        return key;
     }
   };
 
@@ -323,8 +355,8 @@ const SettingsScreen = () => {
             </TouchableOpacity>
           </View>
           <Text style={[styles.textCaption, styles[`textCaption${theme}`]]}>
-            Vymaže všetky playlisty, vyčistí zoznam obľúbených piesní a odstráni
-            všetky dáta, ktoré si aplikácia uložila na vašom telefóne.
+            Vymaže všetky piesne, playlisty, vyčistí zoznam obľúbených piesní a
+            odstráni všetky dáta, ktoré si aplikácia uložila na vašom telefóne.
           </Text>
         </View>
         <View style={styles.containerSeparator}>
@@ -346,9 +378,7 @@ const SettingsScreen = () => {
               handleLinkPress("https://github.com/flpmko/spevnik-mobile-app")
             }
           >
-            <Text style={[styles.textButton, styles.textLink]}>
-              odkaz na repozitár
-            </Text>
+            <Text style={[styles.textButton, styles.textLink]}>repozitár</Text>
             <Ionicons
               name={"ios-logo-github"}
               size={32}
@@ -369,9 +399,7 @@ const SettingsScreen = () => {
               handleLinkPress("https://forms.gle/mtpFiQSnTPUt1YND8")
             }
           >
-            <Text style={[styles.textButton, styles.textLink]}>
-              odkaz na formulár
-            </Text>
+            <Text style={[styles.textButton, styles.textLink]}>formulár</Text>
             <Ionicons name={"open"} size={32} color={colors.primary} />
           </TouchableOpacity>
         </View>
@@ -388,7 +416,7 @@ const SettingsScreen = () => {
               handleLinkPress("https://forms.gle/BiGNYxjaU9VXHZP2A")
             }
           >
-            <Text style={[styles.textButton, styles.textLink]}>nahlásiť</Text>
+            <Text style={[styles.textButton, styles.textLink]}>formulár</Text>
             <Ionicons name={"open"} size={32} color={colors.primary} />
           </TouchableOpacity>
         </View>

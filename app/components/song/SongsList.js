@@ -2,7 +2,6 @@ import React, { useEffect, useLayoutEffect, useState } from "react";
 import {
   StyleSheet,
   FlatList,
-  SafeAreaView,
   LogBox,
   View,
   Text,
@@ -12,7 +11,6 @@ import {
 } from "react-native";
 import Popover from "react-native-popover-view/dist/Popover";
 import { Ionicons } from "@expo/vector-icons";
-import { StatusBar } from "expo-status-bar";
 import { filter, _ } from "lodash";
 import { doc, getDoc } from "firebase/firestore";
 import NetInfo from "@react-native-community/netinfo";
@@ -27,7 +25,6 @@ import {
 } from "../../util/LocalStorage";
 import ListItem from "../list/ListItem";
 import Separator from "../list/Separator";
-import SearchBar from "../SearchBar";
 import SearchFilterBar from "../SearchFilterBar";
 
 import colors from "../../config/colors";
@@ -42,7 +39,6 @@ const SongsList = ({ route, navigation }) => {
     }
   };
 
-  // const allSongs = props.route.params.data;
   const { theme, favorites, seasons, setSeasons } =
     React.useContext(UserContext);
   const [showFilters, setShowFilters] = useState(route.params.filters);
@@ -165,14 +161,19 @@ const SongsList = ({ route, navigation }) => {
         setModern(locDataMod);
       }
       if (showFilters) {
-        NetInfo.fetch().then(async (isInternetReachable) => {
-          if (isInternetReachable) {
+        NetInfo.fetch().then(async (state) => {
+          if (state.isConnected) {
             await fetchFromDb();
           } else {
             if (locData === null) {
               Alert.alert(
                 "Upozornenie",
-                "Pre prvé spustenie aplikácie je potrebné internetové pripojenie. Vypnite prosím aplikáciu, pripojte sa na internet a potom aplikáciu opäť spustite."
+                "Pre prvé spustenie aplikácie a načítanie piesní je potrebné internetové pripojenie. Vypnite prosím aplikáciu, pripojte sa na internet a potom aplikáciu opäť spustite.",
+                [
+                  {
+                    text: "Restart",
+                  },
+                ]
               );
             }
           }
@@ -253,6 +254,7 @@ const SongsList = ({ route, navigation }) => {
             return <ListItem item={item} onPress={() => goToSong(item)} />;
           }}
           ItemSeparatorComponent={Separator}
+          ListFooterComponent={() => <Separator />}
           ListHeaderComponent={
             showFilters ? (
               <SearchFilterBar
