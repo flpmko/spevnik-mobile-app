@@ -5,7 +5,7 @@ import { StyleSheet, View, TextInput } from "react-native";
 import colors from "../config/colors";
 import { UserContext } from "../util/UserManager";
 
-const SearchBar = ({ handleSearch, query }) => {
+const SearchBar = ({ handleSearch, query, keyboard }) => {
   const { theme } = React.useContext(UserContext);
   return (
     <View style={styles.container}>
@@ -26,7 +26,7 @@ const SearchBar = ({ handleSearch, query }) => {
               ? colors.light_placeholder
               : colors.dark_placeholder
           }
-          keyboardType="number-pad"
+          keyboardType={keyboard}
           keyboardAppearance={theme}
           clearButtonMode="always"
           value={query}

@@ -1,13 +1,23 @@
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import SearchBar from './SearchBar';
-import FilterBar from './filter/FilterBar';
+import React from "react";
+import { StyleSheet, View } from "react-native";
+import SearchBar from "./SearchBar";
+import FilterBar from "./filter/FilterBar";
 
-const SearchFilterBar = ({ filters, handleSearch, query, handleFilter }) => {
+const SearchFilterBar = ({
+  filters,
+  handleSearch,
+  query,
+  handleFilter,
+  keyboard,
+}) => {
   return (
     <View>
       <View>
-        <SearchBar handleSearch={handleSearch} query={query} />
+        <SearchBar
+          handleSearch={handleSearch}
+          query={query}
+          keyboard={keyboard}
+        />
       </View>
       <View style={styles.containerFilter}>
         <FilterBar handleFilter={handleFilter} data={filters} />

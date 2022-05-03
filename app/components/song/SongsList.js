@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
+  Platform,
 } from "react-native";
 import Popover from "react-native-popover-view/dist/Popover";
 import { Ionicons } from "@expo/vector-icons";
@@ -26,6 +27,7 @@ import {
 import ListItem from "../list/ListItem";
 import Separator from "../list/Separator";
 import SearchFilterBar from "../SearchFilterBar";
+import SearchBar from "../SearchBar";
 
 import colors from "../../config/colors";
 
@@ -74,8 +76,11 @@ const SongsList = ({ route, navigation }) => {
   };
 
   // search helper function
-  const contains = ({ number }, input) => {
+  const contains = ({ number, title }, input) => {
     if (number?.toString().startsWith(input)) {
+      return true;
+    }
+    if (title.toLowerCase().startsWith(input)) {
       return true;
     }
     return false;
@@ -84,7 +89,11 @@ const SongsList = ({ route, navigation }) => {
   // search the list of hymns based on number
   const handleSearch = (input) => {
     let dataSet;
-    showFilters ? (dataSet = allSongs) : (dataSet = modern);
+    if (showFilters) {
+      dataSet = allSongs;
+    } else {
+      dataSet = modern;
+    }
     const data = filter(dataSet, (song) => {
       return contains(song, input);
     });
@@ -256,24 +265,32 @@ const SongsList = ({ route, navigation }) => {
           ItemSeparatorComponent={Separator}
           ListFooterComponent={() => <Separator />}
           ListHeaderComponent={
-            showFilters ? (
-              <SearchFilterBar
-                filters={seasons}
-                handleFilter={handleFilter}
-                query={query}
-                handleSearch={handleSearch}
-                seasonQuery={seasonQuery}
-                setSeasonQuery={setSeasonQuery}
-              />
-            ) : (
-              !route.params.filters && (
-                // <SearchBar handleSearch={handleSearch} query={query} />
-                <View style={styles.containerFavs}>
-                  <Text style={[styles.textFavs, styles[`textFavs${theme}`]]}>
-                    Všetky tvoje obľúbené piesne na jednom mieste.
-                  </Text>
-                </View>
+            route.params.filters ? (
+              showFilters ? (
+                <SearchFilterBar
+                  filters={seasons}
+                  handleFilter={handleFilter}
+                  query={query}
+                  handleSearch={handleSearch}
+                  seasonQuery={seasonQuery}
+                  setSeasonQuery={setSeasonQuery}
+                  keyboard={
+                    Platform.OS === "ios" ? "name-phone-pad" : "default"
+                  }
+                />
+              ) : (
+                <SearchBar
+                  handleSearch={handleSearch}
+                  query={query}
+                  keyboard="default"
+                />
               )
+            ) : (
+              <View style={styles.containerFavs}>
+                <Text style={[styles.textFavs, styles[`textFavs${theme}`]]}>
+                  Všetky tvoje obľúbené piesne na jednom mieste.
+                </Text>
+              </View>
             )
           }
         />
